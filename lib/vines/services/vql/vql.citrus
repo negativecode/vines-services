@@ -1,0 +1,115 @@
+grammar VinesQL
+  rule expr
+    expr:(disjunctive | stmt)
+  end
+
+  rule disjunctive
+    (lhs:stmt 'or' ws rhs:expr) <Vines::Services::VQL::Or>
+  end
+
+  rule stmt
+    stmt:(conjunctive | term)
+  end
+
+  rule conjunctive
+    (lhs:term 'and' ws rhs:stmt) <Vines::Services::VQL::And>
+  end
+
+  rule term
+     is_not | is | ltgt | starts_with | ends_with | not_like | like | group
+  end
+
+  rule is
+    (lhs:member 'is' ws rhs:value) <Vines::Services::VQL::Is>
+  end
+
+  rule is_not
+    (lhs:member 'is' ws 'not' ws rhs:value) <Vines::Services::VQL::IsNot>
+  end
+
+  rule like
+    (lhs:member 'like' ws rhs:string) <Vines::Services::VQL::Like>
+  end
+
+  rule not_like
+    (lhs:member 'not' ws 'like' ws rhs:string) <Vines::Services::VQL::NotLike>
+  end
+
+  rule starts_with
+    (lhs:member 'starts' ws 'with' ws rhs:string) <Vines::Services::VQL::StartsWith>
+  end
+
+  rule ends_with
+    (lhs:member 'ends' ws 'with' ws rhs:string) <Vines::Services::VQL::EndsWith>
+  end
+
+  rule ltgt
+    (lhs:member op:([<>] '='?) ws rhs:number) <Vines::Services::VQL::LtGt>
+  end
+
+  rule value
+    string | number | keyword
+  end
+
+  rule group
+    (lparen expr rparen) <Vines::Services::VQL::Group>
+  end
+
+  rule member
+    (str:(ident ('.' ident)*) ws) <Vines::Services::VQL::Member>
+  end
+
+  rule ident
+    (alpha | '_') (alpha | '_' | digits)*
+  end
+
+  rule string
+    single_quoted | double_quoted
+  end
+
+  rule single_quoted
+    ("'" str:(~"'") "'" ws) <Vines::Services::VQL::SingleQuoted>
+  end
+
+  rule double_quoted
+    ('"' str:(~'"') '"' ws) <Vines::Services::VQL::DoubleQuoted>
+  end
+
+  rule keyword
+      (str:'null'  ws) <Vines::Services::VQL::Null>
+    | (str:'true'  ws) <Vines::Services::VQL::Terminal>
+    | (str:'false' ws) <Vines::Services::VQL::Terminal>
+  end
+
+  rule number
+    float | int
+  end
+
+  rule float
+    (str:('-'? digits '.' digits) ws) <Vines::Services::VQL::Terminal>
+  end
+
+  rule int
+    (str:('-'? digits) ws) <Vines::Services::VQL::Terminal>
+  end
+
+  rule digits
+    [0-9]+
+  end
+
+  rule alpha
+    [a-zA-Z]+
+  end
+
+  rule lparen
+    '(' ws
+  end
+
+  rule rparen
+    ')' ws
+  end
+
+  rule ws
+    [ \t\n\r]*
+  end
+end

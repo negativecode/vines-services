@@ -1,0 +1,52 @@
+#editor-buttons {
+  background: #f8f8f8;
+  border-top: 1px solid #dfdfdf;
+  height: 50px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+#editor-buttons {
+  text-align: right;
+}
+#editor-buttons #save {
+  position: relative;
+  right: 10px;
+  top: 10px;
+}
+form.sections h2 {
+  background: none;
+  border: none;
+  padding-left: 0;
+}
+form.sections label {
+  display: block;
+  font-weight: bold;
+  font-size: 9pt;
+  color: rgba(0,0,0,0.8);
+  margin: 10px 0 -2px 0;
+}
+form.sections input[type="text"],
+form.sections input[type="email"],
+form.sections input[type="password"],
+form.sections textarea {
+  width: 90%;
+}
+form.sections section {
+  border-bottom: 1px solid #ddd;
+  margin: 0 20px;
+}
+form.sections section fieldset {
+  padding-left: 30%;
+  margin-top: -33px;
+  margin-bottom: 10px;
+}
+form.sections section:last-child {
+  border-bottom: none;
+  margin-bottom: 20px;
+}
+form.sections .error {
+  color: #dd2828;
+  font-size: 8pt;
+  width: 89%;
+}

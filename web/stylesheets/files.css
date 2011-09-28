@@ -1,0 +1,218 @@
+#files-page #container {
+  height: 100%;
+}
+#files-page #files-title {
+  background: #f8f8f8;
+}
+#files-page #files {
+  background: #fff;
+  height: 100%;
+  list-style: none;
+  width: 100%;
+}
+#files-page #files li {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 10px;
+  position: relative;
+}
+#files-page #files li .file-icon {
+  float: left;
+}
+#files-page #files li .file-icon > svg {
+  height: 30px;
+  width: 30px;
+}
+#files-page #files li .file-icon .size {
+  color: rgba(0, 0, 0, 0.7);
+  display: block;
+  font-size: 9pt;
+  line-height: 1;
+}
+#files-page #files li h2 {
+  border: none;
+  line-height: 1;
+  padding: 0 0 0 50px;
+}
+#files-page #files li:hover {
+  background: #fdfdfd;
+}
+#files-page #files li .file-form {
+  opacity: 0;
+  position: absolute;
+  right: 10px;
+  top: 22px;
+  -moz-transition: opacity 0.3s;
+  -o-transition: opacity 0.3s;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+#files-page #files li:hover .file-form {
+  opacity: 1.0;
+}
+#files-page #files li:hover footer {
+  color: rgba(0, 0, 0, 0.7);
+}
+#files-page #files li footer {
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 9pt;
+  padding-left: 50px;
+  -moz-transition: color 0.3s;
+  -o-transition: color 0.3s;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+}
+#files-page #files li .time {
+  display: block;
+}
+#files-page #files li .labels {
+  line-height: 1;
+  min-height: 10px;
+  width: 80%;
+}
+#files-page #files li .labels li {
+  border: none;
+  display: inline-block;
+  line-height: 1;
+  margin-right: 10px;
+  margin-bottom: 7px;
+  padding: 0 12px 0 0;
+  position: relative;
+  text-transform: capitalize;
+}
+#files-page #files li .labels li .remove {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 14px;
+}
+#files-page #files li .labels li .remove svg {
+  height: 12px;
+  width: 12px;
+}
+#files-page #files .add-label-button {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 3px;
+}
+#files-page #files .add-label-button svg {
+  height: 14px;
+  width: 14px;
+}
+#files-page #files form.add-label input[type="text"] {
+  display: inline-block;
+  font-size: 8pt;
+  padding: 2px;
+  position: relative;
+  top: -4px;
+  width: 100px;
+}
+#files-page #file-chooser {
+  height: 30px;
+  opacity: 0;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+#files-page #open-file-chooser {
+  height: 30px;
+  margin: 0;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 240px;
+}
+#files-page #upload-dnd {
+  color: #ababab;
+  font-weight: bold;
+  font-size: 14px;
+  position: absolute;
+  top: 27px;
+  text-align: center;
+  text-shadow: 0 1px 1px #fff;
+  width: 260px;
+}
+#files-page #uploads .progress {
+  background: #fff;
+  border: 1px solid #448ccd;
+  border-top: 1px solid #5da8db;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 1px #fff, inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 1px #fff, inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  color: #0d4078;
+  font-size: 11px;
+  font-weight: bold;
+  height: 15px;
+  line-height: 15px;
+  margin: 0 10px 10px 10px;
+  position: relative;
+  text-align: center;
+  text-shadow: 0 1px 1px #a2d8f8;
+}
+#files-page #uploads .progress .text {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+#files-page #uploads .progress .meter {
+  background: #8dd2f7;
+  background: -moz-linear-gradient(#8dd2f7, #58b8f4);
+  background: -o-linear-gradient(#8dd2f7, #58b8f4);
+  background: -webkit-gradient(linear, left top, left bottom, from(#8dd2f7), to(#58b8f4));
+  height: 15px;
+  position: absolute;
+  top: 0;
+}
+#files-page #uploads .progress .cancel {
+  height: 100%;
+  width: 16px;
+  position: absolute;
+  right: 0;
+}
+#files-page #labels,
+#files-page #uploads {
+  height: 100%;
+  list-style: none;
+  text-shadow: 0 1px 1px #fff;
+  width: 260px;
+}
+#files-page #labels li .text {
+  text-transform: capitalize;
+}
+#files-page #labels li,
+#files-page #uploads li {
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  min-height: 42px;
+  padding: 0 10px;
+  position: relative;
+  -moz-transition: background 0.3s;
+  -o-transition: background 0.3s;
+  -webkit-transition: background 0.3s;
+  transition: background 0.3s;
+}
+#files-page #uploads li {
+  font-weight: normal;
+  padding: 10px 0 0 0;
+  background: #f8f8f8;
+}
+#files-page #labels li:hover:not(.selected),
+#files-page #uploads li:hover {
+  background: rgba(255, 255, 255, 1.0);
+}
+#files-page #labels li.selected .count {
+  color: rgba(255, 255, 255, 0.85);
+}
+#files-page #labels .count {
+  display: block;
+  font-size: 11px;
+  font-weight: normal;
+  line-height: 11px;
+}
+#files-page #charlie-controls {
+  text-align: right;
+}
+#files-page #search-files-form {
+  background: #f8f8f8;
+}

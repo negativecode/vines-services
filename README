@@ -1,0 +1,40 @@
+== Welcome to Vines Services
+
+Vines Services are dynamically updated groups of systems based on criteria like
+hostname, installed software, operating system, etc. Send a command to the
+service and it runs on every system in the group. Services, files and permissions
+are managed via the bundled web application.
+
+Services are defined using VinesQL, a simple query language that finds systems
+based on their machine attributes. A "Mac OS X Lion" service might be
+defined as: platform is 'mac_os_x' and platform_version starts with '10.7'.
+As machines update to Lion, they will join this service automatically and may
+be managed as one group.
+
+== Usage
+
+1. gem install vines-services
+2. vines-services init wonderland.lit
+3. cd wonderland.lit && vines-services start
+
+== Dependencies
+
+* bcrypt-ruby >= 3.0.0
+* blather >= 0.5.4
+* citrus >= 2.4.0
+* eventmachine >= 0.12.10
+* nokogiri >= 1.4.4
+* sqlite3 >= 1.3.4
+* ruby >= 1.9.2
+
+== Ubuntu setup
+$ sudo apt-get install build-essential ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev
+
+== Contact
+
+* David Graham  <david@negativecode.com>
+* Chris Johnson <chris@negativecode.com>
+
+== License
+
+Vines Services is released under the MIT license. Check the LICENSE file for details.

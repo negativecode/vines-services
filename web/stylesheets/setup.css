@@ -1,0 +1,117 @@
+#setup-page #container {
+  height: 100%;
+}
+#setup-page #alpha {
+  width: 200px;
+}
+#setup-page #beta {
+  background: #fff;
+  border-left: 1px solid #ddd;
+  left: 200px;
+}
+#setup-page #charlie {
+  background: #fff;
+}
+#setup-page #setup-title {
+  background: #f8f8f8;
+}
+#services-page #search-users-form {
+  background: #f8f8f8;
+}
+#setup-page #setup {
+  height: 100%;
+  list-style: none;
+  text-shadow: 0 1px 1px #fff;
+  width: 200px;
+}
+#setup-page #setup li {
+  cursor: pointer;
+  font-weight: bold;
+  min-height: 22px;
+  padding: 0 10px;
+  position: relative;
+}
+#setup-page #users {
+  height: 100%;
+  list-style: none;
+  text-shadow: 0 1px 1px #fff;
+  width: 260px;
+}
+#setup-page #users li {
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  min-height: 42px;
+  padding: 0 10px;
+  position: relative;
+  -moz-transition: background 0.3s;
+  -o-transition: background 0.3s;
+  -webkit-transition: background 0.3s;
+  transition: background 0.3s;
+}
+#setup-page #users li:hover:not(.selected) {
+  background: rgba(255, 255, 255, 1.0);
+}
+#setup-page #users li.selected .jid {
+  color: rgba(255, 255, 255, 0.85);
+}
+#setup-page #users .jid {
+  display: block;
+  font-size: 11px;
+  font-weight: normal;
+  line-height: 11px;
+}
+#setup-page #search-users-form {
+  background: #f8f8f8;
+}
+#setup-page #blank-slate {
+  margin-top: -65px;
+  margin-left: -225px;
+  text-align: center;
+  width: 450px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#setup-page #blank-slate p {
+  color: rgba(0,0,0,0.4);
+  font-size: 12pt;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+#setup-page #permissions {
+  list-style: none;
+}
+#setup-page #services {
+  max-height: 140px;
+  list-style: none;
+}
+#setup-page #services label,
+#setup-page #permissions label  {
+  color: inherit;
+  display: inline;
+  font-size: inherit;
+  font-weight: normal;
+  margin-left: 2px;
+}
+#setup-page #token-container {
+  position: relative;
+  width: 92%;
+}
+#setup-page #token-container #password1 {
+  width: inherit;
+}
+#setup-page #new-token {
+  display: inline;
+  height: 27px;
+  margin: 0;
+  padding: 0 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+#setup-page #info p {
+  line-height: 1;
+}
