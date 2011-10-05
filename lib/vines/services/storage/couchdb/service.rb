@@ -6,7 +6,7 @@ module Vines
       class Service < CouchRest::Model::Base
         extend Storage::CouchDB::ClassMethods
 
-        KEYS      = %w[_id name code accounts users jid created_at modified_at].freeze
+        KEYS      = %w[_id name code accounts users jid created_at updated_at].freeze
         VIEW_ID   = "_design/System".freeze
         VIEW_NAME = "System/memberships".freeze
 

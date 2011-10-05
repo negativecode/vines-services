@@ -6,7 +6,7 @@ module Vines
       class User < CouchRest::Model::Base
         extend Storage::CouchDB::ClassMethods
 
-        KEYS = %w[_id name permissions system created_at modified_at].freeze
+        KEYS = %w[_id name permissions system created_at updated_at].freeze
 
         before_save :enforce_constraints
         after_destroy :remove_references

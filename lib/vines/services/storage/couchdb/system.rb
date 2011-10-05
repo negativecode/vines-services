@@ -6,7 +6,7 @@ module Vines
       class System < CouchRest::Model::Base
         extend Storage::CouchDB::ClassMethods
 
-        KEYS      = %w[_id ohai created_at modified_at].freeze
+        KEYS      = %w[_id ohai created_at updated_at].freeze
         VIEW_NAME = "System/memberships".freeze
 
         attr_writer :services

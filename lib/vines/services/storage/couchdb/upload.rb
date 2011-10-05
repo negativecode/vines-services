@@ -6,7 +6,7 @@ module Vines
       class Upload < CouchRest::Model::Base
         extend Storage::CouchDB::ClassMethods
 
-        KEYS = %w[_id name size labels created_at modified_at].freeze
+        KEYS = %w[_id name size labels created_at updated_at].freeze
 
         property :name, String
         property :size, Integer
