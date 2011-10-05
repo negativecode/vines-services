@@ -19,7 +19,7 @@ class FilesPage
   labelNodeList: (label)->
     text = if label.size == 1 then 'file' else 'files'
     node = $("""
-      <li data-name="" style='display:none;'>
+      <li data-name="">
         <span class="text"></span>
         <span class="count">#{label.size} #{text}</span>
       </li>
@@ -27,7 +27,6 @@ class FilesPage
     $('.text', node).text label.name
     node.attr 'data-name', label.name
     node.click (event) => this.selectLabel(event)
-    node.fadeIn(100)
 
   selectLabel: (event) ->
     name = $(event.currentTarget).attr 'data-name'
@@ -127,8 +126,9 @@ class FilesPage
     file = node.data 'file'
     file.labels.push label for label in labels
     @api.save FILES, file, (result) ->
-    this.labelNode node, label for label in labels
-    this.findLabels()
+    for label in labels
+      this.labelNode node, label
+      this.updateLabelCount label, 1
     false
 
   removeLabel: (node, item) ->
@@ -137,10 +137,21 @@ class FilesPage
     file.labels = (label for label in file.labels when label != remove)
     @api.save FILES, file, (result) ->
     item.fadeOut 200, -> item.remove()
-    this.findLabels()
+    this.updateLabelCount remove, -1
+
+  updateLabelCount: (name, inc) ->
+    el = $ "#labels li[data-name='#{name}'] .count"
+    if el.length > 0
+      count = parseInt(el.text().split(' ')[0]) + inc
+      text = if count == 1 then 'file' else 'files'
+      el.text "#{count} #{text}"
+    else
+      this.labelNodeList(name: name, size: 1)
 
   deleteFile: (node) ->
     @api.remove FILES, node.attr('data-id'), (result) =>
+      for label in node.data('file').labels
+        this.updateLabelCount label, -1
       node.fadeOut 200, -> node.remove()
     false
 
