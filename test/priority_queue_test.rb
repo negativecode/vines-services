@@ -18,6 +18,6 @@ class PriorityQueueTest < MiniTest::Unit::TestCase
     end
     assert queue.empty?
     assert_equal 0, queue.size
-    assert_equal nums.sort {|a, b| -(a <=> b) }, popped
+    assert_equal nums.sort, popped
   end
 end

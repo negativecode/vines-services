@@ -35,7 +35,7 @@ module Vines
       # index, these tasks may be delayed by query tasks.
       def <<(doc)
         @tasks.push({
-          priority: -Time.now.to_f,
+          priority: Time.now.to_f,
           type: :index,
           doc: doc
         })
