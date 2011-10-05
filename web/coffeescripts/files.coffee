@@ -9,8 +9,7 @@ class FilesPage
       jid: @api.jid
       size: this.size
       complete: (file) =>
-        this.fileNode(file)
-        this.findFiles name: file.name
+        this.findFile file.name
 
   findLabels: ->
     $('#labels').empty()
@@ -41,19 +40,35 @@ class FilesPage
     @api.get FILES, criteria, (result) =>
       this.fileNode row for row in result.rows
 
-  fileNode: (file) ->
+  findFile: (name) ->
+    @api.get FILES, name: name, (result) =>
+      this.fileNode result
+
+  updateFileNode: (file) ->
+    node = $ "#files li[data-id='#{file.id}']"
     size = this.size file.size
-    if !file.created_at
-      file.created_at = Date()
     time = this.date file.created_at
+    node.data 'file', file
+    $('h2', node).text file.name
+    $('.size', node).text size
+    $('.time', node).text time
+    node.attr 'data-name', file.name
+    node.attr 'data-size', size
+    node.attr 'data-created', time
+
+  fileNode: (file) ->
+    if $("#files li[data-id='#{file.id}']").length > 0
+      this.updateFileNode file
+      return
+
     node = $("""
-      <li data-id="#{file.id}" data-name="" data-size="#{size}" data-created="#{time}">
+      <li data-id="#{file.id}">
         <div class="file-icon">
-          <span class="size">#{size}</span>
+          <span class="size"></span>
         </div>
         <h2></h2>
         <footer>
-          <span class="time">#{time}</span>
+          <span class="time"></span>
           <ul class="labels"></ul>
           <form class="add-label">
             <div class="add-label-button"></div>
@@ -67,10 +82,6 @@ class FilesPage
         </form>
       </li>
     """).appendTo '#files'
-
-    node.data 'file', file
-    $('h2', node).text file.name
-    node.attr 'data-name', file.name
 
     new Button $('.file-icon', node).get(0), ICONS.page2,
       scale: 1.0
@@ -87,7 +98,8 @@ class FilesPage
     $('.add-label-button', node).click ->
       $('form.add-label input[type="text"]', node).show()
 
-    this.labelNode node, label for label in file.labels
+    this.updateFileNode file
+    this.labelNode(node, label) for label in file.labels
 
   labelNode: (node, label) ->
     labels = $('.labels', node)
@@ -278,7 +290,6 @@ class FilesPage
         upload.start()
       else
         @sending = null
-        this.fileNode(upload.file)
 
     find: (file) ->
       (up for up in @uploads when up.file.name == file.name).shift()
