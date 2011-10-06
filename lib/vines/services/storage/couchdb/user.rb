@@ -51,6 +51,16 @@ module Vines
           end
         end
 
+        # Grant this user all possible permissions.
+        def admin!
+          write_attribute('permissions', {
+            'systems'  => true,
+            'services' => true,
+            'files'    => true,
+            'users'    => true
+          })
+        end
+
         def permissions=(perms)
           perms ||= {}
           self.manage_systems = perms['systems']
