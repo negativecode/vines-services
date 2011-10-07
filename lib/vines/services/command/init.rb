@@ -13,7 +13,7 @@ module Vines
 
           @db = find_db
           save_user(ask_for_jid, ask_for_password)
-          @token = Kit.generate_password
+          @token = Kit.auth_token
 
           Dir.mkdir(base)
           %w[server services agent].each do |sub|
