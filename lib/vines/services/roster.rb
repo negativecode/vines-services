@@ -1,70 +1,76 @@
 # encoding: UTF-8
+
 module Vines
   class Storage
     class CouchDB < Storage
+      alias :_services_find_user :find_user
 
-      ALL_SERVICES = '/_design/Service/_view/by_name'.freeze
+      # Override the user's roster with an auto-populated roster containing
+      # the services and systems to which the user has permission to access.
+      def find_user(jid)
+        user = _services_find_user(jid)
+        return unless user
+        services = find_services(user.jid)
+        user.roster = services.map do |row|
+          Contact.new(
+            :jid => row['jid'],
+            :name => row['name'],
+            :subscription => 'to',
+            :groups => ['Services'])
+        end
+        find_systems(services).each do |name, groups|
+          user.roster << Contact.new(
+            :jid => JID.new(name.dup, user.jid.domain),
+            :name => name,
+            :subscription => 'to',
+            :groups => ['Systems', *groups])
+        end
+        user.roster << Contact.new(
+          :jid => "vines.#{user.jid.domain}",
+          :name => 'Vines',
+          :subscription => 'to')
+        user
+      end
 
-      # The existing storage class needs another method for our custom roster queries
-      # The default escaping in URLs makes this method necessary
-      def get_services
-        http = EM::HttpRequest.new("#{@url}#{ALL_SERVICES}").get
-        http.errback { yield }
+      # Return the Service documents to which this JID has permission to
+      # access.
+      def find_services(jid)
+        url = "%s/_design/Service/_view/by_user?reduce=false&key=%s" % [@url, escape(jid.to_s).to_json]
+        http = EM::HttpRequest.new(url).get
+        http.errback { yield [] }
         http.callback do
           doc = if http.response_header.status == 200
-            JSON.parse(http.response) rescue nil
+            rows = JSON.parse(http.response)['rows'] rescue []
+            rows.map {|row| row['value'] }
           end
-          yield doc
+          yield doc || []
         end
       end
+      fiber :find_services
 
-      #In order to supply the correct vines roster logic, we need to over ride the default
-      #User creation of in the vines server. This method is much more effecient than
-      #looking up roster memberships each time the roster is sent.
-      def find_user(jid)
-        jid = JID.new(jid || '').bare.to_s
-        if jid.empty? then yield; return end
-        get("user:#{jid}") do |doc|
-          user = if doc && doc['type'] == 'User'
-            User.new(:jid => jid).tap do |user|
-              user.name, user.password = doc.values_at('name', 'password')
-              if doc['roster'] != ""
-                (doc['roster'] || {}).each_pair do |jid, props|
-                  user.roster << Contact.new(
-                    :jid => jid,
-                    :name => props['name'],
-                    :subscription => props['subscription'],
-                    :ask => props['ask'],
-                    :groups => props['groups'] || [])
-                end
-              end
-              add_user_roster_services(user)
-            end
-          end
-          yield user
-        end
-      end
-      fiber :find_user
-
-      # We will go find each service that contains this user jid in the
-      # users of the service document.
-      def add_user_roster_services(user)
-        self.get_services do |cdoc|
-          if cdoc
-            rows = cdoc['rows'].map do |row|
-              if row['value']['users'].include?(user.jid.to_s)
-                jid = JID.new("#{row['value']['jid']}").bare.to_s
-                user.roster << Contact.new(
-                  :jid => jid,
-                  :name => row['value']['name'],
-                  :subscription => "both",
-                  :ask => "subscribe",
-                  :groups => ["Vines"])
+      # Find the systems that belong to these services. Return a Hash of
+      # system name to list of service names to which it belongs.
+      def find_systems(services)
+        keys = services.map {|row| [0, row['_id']] }
+        url = "%s/_design/System/_view/memberships?reduce=false" % @url
+        http = EM::HttpRequest.new(url).post(
+          head: {'Content-Type' => 'application/json'},
+          body: {keys: keys}.to_json)
+        http.errback { yield [] }
+        http.callback do
+          doc = if http.response_header.status == 200
+            rows = JSON.parse(http.response)['rows'] rescue []
+            Hash.new {|h, k| h[k] = [] }.tap do |systems|
+              rows.each do |row|
+                service = services.find {|s| s['_id'] == row['key'][1] }
+                systems[row['value']['name']] << service['name']
               end
             end
           end
+          yield doc || []
         end
       end
+      fiber :find_systems
     end
   end
 end
