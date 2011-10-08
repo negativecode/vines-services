@@ -11,6 +11,8 @@ defined as: platform is 'mac_os_x' and platform_version starts with '10.7'.
 As machines update to Lion, they will join this service automatically and may
 be managed as one group.
 
+Additional documentation can be found at www.getvines.com.
+
 == Usage
 
 1. gem install vines-services
@@ -19,11 +21,10 @@ be managed as one group.
 
 == Dependencies
 
-* bcrypt-ruby >= 3.0.0
-* blather >= 0.5.4
+* bcrypt-ruby >= 3.0.1
+* blather >= 0.5.7
 * citrus >= 2.4.0
 * eventmachine >= 0.12.10
-* nokogiri >= 1.4.4
 * sqlite3 >= 1.3.4
 * ruby >= 1.9.2
 
@@ -32,8 +33,7 @@ $ sudo apt-get install build-essential ruby1.9.1 ruby1.9.1-dev libxml2-dev libxs
 
 == Contact
 
-* David Graham  <david@negativecode.com>
-* Chris Johnson <chris@negativecode.com>
+* David Graham <david@negativecode.com>
 
 == License
 

@@ -5,10 +5,11 @@ require 'rubygems/package_task'
 require 'nokogiri'
 require_relative 'lib/vines/services/version'
 
+CLOBBER.include('pkg', 'web/javascripts', 'web/stylesheets/app.css')
+
 spec = Gem::Specification.new do |s|
   s.name    = "vines-services"
   s.version = Vines::Services::VERSION
-  s.date    = Time.now.strftime("%Y-%m-%d")
 
   s.summary     = "An XMPP component that broadcasts shell commands to many agents."
   s.description = "Vines Services are dynamically updated groups of systems based
@@ -16,17 +17,16 @@ on criteria like hostname, installed software, operating system, etc. Send a
 command to the service and it runs on every system in the group. Services, files
 and permissions are managed via the bundled web application."
 
-  s.authors      = ["David Graham", "Chris Johnson"]
-  s.email        = %w[david@negativecode.com chris@negativecode.com]
+  s.authors      = ["David Graham"]
+  s.email        = %w[david@negativecode.com]
   s.homepage     = "http://www.getvines.com"
 
-  s.files        = FileList['[A-Z]*', '{bin,lib,conf,web}/**/*']
   s.test_files   = FileList["test/**/*"]
   s.executables  = %w[vines-services]
   s.require_path = "lib"
 
-  s.add_dependency "bcrypt-ruby", "~> 3.0.0"
-  s.add_dependency "blather", "~> 0.5.4"
+  s.add_dependency "bcrypt-ruby", "~> 3.0.1"
+  s.add_dependency "blather", "~> 0.5.7"
   s.add_dependency "citrus", "~> 2.4.0"
   s.add_dependency "couchrest_model", "~> 1.1.2"
   s.add_dependency "em-http-request", "~> 0.3.0"
@@ -39,8 +39,12 @@ and permissions are managed via the bundled web application."
   s.required_ruby_version = '>= 1.9.2'
 end
 
-Gem::PackageTask.new(spec) do |pkg|
-  pkg.need_tar = true
+# Set gem file list after CoffeeScripts have been compiled, so web/javascripts/
+# is included in the gem.
+task :gemprep do
+  spec.files = FileList['[A-Z]*', '{bin,lib,conf,web}/**/*']
+  Gem::PackageTask.new(spec).define
+  Rake::Task['gem'].invoke
 end
 
 Rake::TestTask.new(:test) do |test|
@@ -116,7 +120,6 @@ task :compile do
 
   sh %{coffee -c -b -o web/javascripts web/coffeescripts/*.coffee}
   sh %{cat #{js_files} | uglifyjs -nc > web/javascripts/app.js}
-
   sh %{cat #{css_files} > web/stylesheets/app.css}
 end
 
@@ -126,5 +129,4 @@ task :cleanup do
   File.delete('/tmp/index.html')
 end
 
-
-task :default => [:clobber, :test, :compile, :gem, :cleanup]
+task :default => [:clobber, :test, :compile, :gemprep, :cleanup]
