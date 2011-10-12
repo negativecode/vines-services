@@ -183,7 +183,8 @@ class SystemsPage
         <h2 id="chat-title">Select a buddy or service to start communicating</h2>
         <ul id="messages" class="scroll y-fill"></ul>
         <form id="message-form">
-          <input id="message" name="message" type="text" maxlength="1024" placeholder="Type a message and press enter to send"/>
+          <label id="message-label" for="message">$</label>
+          <input id="message" name="message" type="text" maxlength="1024" placeholder="Type a command and press enter to send"/>
         </form>
       </div>
     """).appendTo '#container'

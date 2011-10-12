@@ -27,19 +27,31 @@
   font-weight: bold;
 }
 #systems-page #message-form {
-  background: #f8f8f8;
-  border-top: 1px solid #dfdfdf;
-  height: 50px;
+  background: #fff;
+  height: 25px;
   position: absolute;
   bottom: 0;
   width: 100%;
 }
-#systems-page #message {
-  display: block;
+#systems-page #message-label {
+  font-family: Menlo, monospace;
+  font-size: 11px;
+  padding: 0 2px 0 10px;
   position: relative;
-  left: 10px;
-  top: 10px;
-  width: 428px;
+  top: -3px;
+}
+#systems-page #message {
+  box-shadow: none;
+  display: inline-block;
+  font-family: Menlo, monospace;
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: -3px;
+}
+#systems-page #message:focus {
+  box-shadow: none;
 }
 #systems-page #roster {
   height: 100%;
