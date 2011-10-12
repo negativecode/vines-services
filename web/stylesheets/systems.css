@@ -1,53 +1,32 @@
-#servers-page #container {
+#systems-page #container {
   height: 100%;
 }
-#servers-page #chat-title {
+#systems-page #chat-title {
   background: #f8f8f8;
 }
-#servers-page #messages {
+#systems-page #messages {
   background: #fff;
   height: 100%;
   list-style: none;
-  text-shadow: 0 1px 1px #ddd;
   width: 100%;
 }
-#servers-page #messages li {
-  border-bottom: 1px solid #f0f0f0;
-  min-height: 40px;
-  padding: 10px;
+#systems-page #messages li {
+  padding: 0 10px;
   position: relative;
 }
-#servers-page #messages li:hover > span .time {
+#systems-page #messages li:hover > span .time {
   opacity: 0.3;
 }
-#servers-page #messages li img {
-  border: 3px solid #fff;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 40px rgba(0, 0, 0, 0.06) inset;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 40px rgba(0, 0, 0, 0.06) inset;
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  height: 40px;
-  width: 40px;
+#systems-page #messages li pre,
+#systems-page #messages li footer {
+  font-family: Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.3;
 }
-#servers-page #messages li p {
-  line-height: 1.5;
-  width: 90%;
+#systems-page #messages li footer {
+  font-weight: bold;
 }
-#servers-page #messages li footer {
-  font-size: 9pt;
-  padding-right: 50px;
-  text-align: right;
-}
-#servers-page #messages li footer span {
-  color: #d8d8d8;
-  margin-right: 0.5em;
-  text-shadow: none;
-}
-#servers-page #messages li footer .author::before {
-  content: '\2014 ';
-}
-#servers-page #message-form {
+#systems-page #message-form {
   background: #f8f8f8;
   border-top: 1px solid #dfdfdf;
   height: 50px;
@@ -55,22 +34,20 @@
   bottom: 0;
   width: 100%;
 }
-#servers-page #message {
+#systems-page #message {
   display: block;
   position: relative;
   left: 10px;
   top: 10px;
   width: 428px;
 }
-#servers-page #roster,
-#servers-page #notifications {
+#systems-page #roster {
   height: 100%;
   list-style: none;
   text-shadow: 0 1px 1px #fff;
   width: 260px;
 }
-#servers-page #roster li,
-#servers-page #notifications li {
+#systems-page #roster li {
   cursor: pointer;
   border-bottom: 1px solid #ddd;
   font-weight: bold;
@@ -82,30 +59,25 @@
   -webkit-transition: background 0.3s;
   transition: background 0.3s;
 }
-#servers-page #notifications li {
-  font-weight: normal;
-  padding: 10px 0 0 0;
-}
-#servers-page #roster li:hover:not(.selected),
-#servers-page #notifications li:hover {
+#systems-page #roster li:hover:not(.selected) {
   background: rgba(255, 255, 255, 1.0);
 }
-#servers-page #roster li.offline > * {
+#systems-page #roster li.offline > * {
   opacity: 0.4;
 }
-#servers-page #roster li.selected > * {
+#systems-page #roster li.selected > * {
   opacity: 1.0;
 }
-#servers-page #roster li.selected .status-msg {
+#systems-page #roster li.selected .status-msg {
   color: rgba(255, 255, 255, 0.85);
 }
-#servers-page #roster .status-msg {
+#systems-page #roster .status-msg {
   display: block;
   font-size: 11px;
   font-weight: normal;
   line-height: 11px;
 }
-#servers-page #roster .unread {
+#systems-page #roster .unread {
   background: #4693FF;
   background: -moz-linear-gradient(#4693FF, #015de6);
   background: -o-linear-gradient(#4693FF, #015de6);
@@ -122,7 +94,7 @@
   top: 14px;
   text-shadow: none;
 }
-#servers-page #roster .vcard-img {
+#systems-page #roster .vcard-img {
   background: #fff;
   border: 1px solid #fff;
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 40px rgba(0, 0, 0, 0.06) inset;
@@ -132,11 +104,4 @@
   position: absolute;
   top: 4px;
   right: 10px;
-}
-#servers-page #charlie-controls {
-  text-align: right;
-}
-#servers-page #edit-contact-jid {
-  color: #444;
-  margin-top: -5px;
 }

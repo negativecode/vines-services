@@ -37,8 +37,8 @@ class SystemsPage
       found = $("#roster li[data-jid='#{jid}']")
       setName(found, contact)
       if found.length == 0
-        if contact.groups[0]=="Vines"
-          img_src = "/lib/images/default-service.png"
+        if contact.groups[0] == "Vines"
+          img_src = "images/default-service.png"
         else
           img_src = "#{@session.avatar jid}"
         node = $("""
@@ -54,11 +54,10 @@ class SystemsPage
 
   message: (message) ->
     this.queueMessage message
-    me     = message.from == @session.jid()
-    from   = message.from.split('/')[0]
-    thread = message.thread
+    me   = message.from == @session.jid()
+    from = message.from.split('/')[0]
 
-    if me || from || thread == @currentContact
+    if me || from == @currentContact
       bottom = this.atBottom()
       this.appendMessage message
       this.scroll() if bottom
@@ -73,24 +72,21 @@ class SystemsPage
       callback $(node)
 
   appendMessage: (message) ->
+    me      = message.from == @session.jid()
     from    = message.from.split('/')[0]
     contact = @session.roster[from]
     name    = if contact then (contact.name || from) else from
-    name    = 'Me' if message.from == @session.jid()
-    node    = $("""
-      <li data-jid="#{from}" style="display:none;">
-        <p><pre></pre></p>
-        <img alt="#{from}" src="#{@session.avatar from}"/>
+    node    = $("""<li data-jid="#{from}"><pre></pre></li>""").appendTo '#messages'
+    prefix  = if me then '$ ' else ''
+    $('pre', node).text prefix + message.text
+    unless me
+      node.append("""
         <footer>
-          <span class="author"></span>
+          <span class="author"></span> @
           <span class="time">#{this.datef message.received}</span>
         </footer>
-      </li>
-    """).appendTo '#messages'
-
-    $('pre', node).text message.text
-    $('.author', node).text name
-    node.fadeIn 200
+      """)
+      $('.author', node).text name
 
   queueMessage: (message) ->
     me   = message.from == @session.jid()
@@ -122,33 +118,6 @@ class SystemsPage
     if presence.offline
       this.chat(from).jid = from
 
-    if presence.type == 'subscribe'
-      node = $("""
-        <li data-jid="#{presence.from}" style="display:none;">
-          <form class="inset">
-            <h2>Buddy Approval</h2>
-            <p>#{presence.from} wants to add you as a buddy.</p>
-            <fieldset class="buttons">
-              <input type="button" value="Decline"/>
-              <input type="submit" value="Accept"/>
-            </fieldset>
-          </form>
-        </li>
-      """).appendTo '#notifications'
-      node.fadeIn 200
-      $('form', node).submit => this.acceptContact node, presence.from
-      $('input[type="button"]', node).click => this.rejectContact node, presence.from
-
-  acceptContact: (node, jid) ->
-    node.fadeOut 200, -> node.remove()
-    @session.sendSubscribed jid
-    @session.sendSubscribe  jid
-    false
-
-  rejectContact: (node, jid) ->
-    node.fadeOut 200, -> node.remove()
-    @session.sendUnsubscribed jid
-
   selectContact: (event) ->
     jid = $(event.currentTarget).attr 'data-jid'
     contact = @session.roster[jid]
@@ -171,23 +140,14 @@ class SystemsPage
     this.appendMessage msg for msg in messages
     this.scroll()
 
-    $('#remove-contact-msg').html "Are you sure you want to remove " +
-      "<strong>#{@currentContact}</strong> from your buddy list?"
-    $('#remove-contact-form .buttons').fadeIn 200
-
-    $('#edit-contact-jid').text @currentContact
-    $('#edit-contact-name').val @session.roster[@currentContact].name
-    $('#edit-contact-form input').fadeIn 200
-    $('#edit-contact-form .buttons').fadeIn 200
-
   scroll: ->
     msgs = $ '#messages'
     msgs.animate(scrollTop: msgs.prop('scrollHeight'), 400)
 
   atBottom: ->
     msgs = $('#messages')
-    bottom = msgs.prop('scrollHeight') - msgs.height()
-    msgs.scrollTop() == bottom
+    bottom = msgs.prop('scrollHeight') - msgs.outerHeight()
+    msgs.scrollTop() >= bottom
 
   send: ->
     return false unless @currentContact
@@ -206,96 +166,18 @@ class SystemsPage
     input.val ''
     false
 
-  addContact: ->
-    this.toggleForm '#add-contact-form'
-    contact =
-      jid: $('#add-contact-jid').val()
-      name: $('#add-contact-name').val()
-      groups: ['Buddies']
-    @session.updateContact contact, true if contact.jid
-    false
-
-  removeContact: ->
-    this.toggleForm '#remove-contact-form'
-    @session.removeContact @currentContact
-    @currentContact = null
-
-    $('#chat-title').text 'Select a buddy to chat'
-    $('#messages').empty()
-
-    $('#remove-contact-msg').html "Select a buddy in the list above to remove."
-    $('#remove-contact-form .buttons').hide()
-
-    $('#edit-contact-jid').text "Select a buddy in the list above to update."
-    $('#edit-contact-name').val ''
-    $('#edit-contact-form input').hide()
-    $('#edit-contact-form .buttons').hide()
-    false
-
-  updateContact: ->
-    this.toggleForm '#edit-contact-form'
-    contact =
-      jid: @currentContact
-      name: $('#edit-contact-name').val()
-      groups: @session.roster[@currentContact].groups
-    @session.updateContact contact
-    false
-
-  toggleForm: (form, fn) ->
-    form = $(form)
-    $('form.overlay').each ->
-      $(this).hide() unless this.id == form.attr 'id'
-    if form.is ':hidden'
-      fn() if fn
-      form.fadeIn 100
-    else
-      form.fadeOut 100, ->
-        form[0].reset()
-        fn() if fn
-
   draw: ->
     unless @session.connected()
       window.location.hash = ''
       return
 
-    $('body').attr 'id', 'servers-page'
+    $('body').attr 'id', 'systems-page'
     $('#container').hide().empty()
     $("""
       <div id="alpha" class="sidebar column y-fill">
         <h2>Buddies <div id="search-roster-icon"></div></h2>
         <div id="search-roster-form"></div>
         <ul id="roster" class="selectable scroll y-fill"></ul>
-        <div id="alpha-controls" class="controls">
-          <div id="add-contact"></div>
-          <div id="remove-contact"></div>
-          <div id="edit-contact"></div>
-        </div>
-        <form id="add-contact-form" class="overlay" style="display:none;">
-          <h2>Add Buddy</h2>
-          <input id="add-contact-jid" type="email" maxlength="1024" placeholder="Account name"/>
-          <input id="add-contact-name" type="text" maxlength="1024" placeholder="Real name"/>
-          <fieldset class="buttons">
-            <input id="add-contact-cancel" type="button" value="Cancel"/>
-            <input id="add-contact-ok" type="submit" value="Add"/>
-          </fieldset>
-        </form>
-        <form id="remove-contact-form" class="overlay" style="display:none;">
-          <h2>Remove Buddy</h2>
-          <p id="remove-contact-msg">Select a buddy in the list above to remove.</p>
-          <fieldset class="buttons" style="display:none;">
-            <input id="remove-contact-cancel" type="button" value="Cancel"/>
-            <input id="remove-contact-ok" type="submit" value="Remove"/>
-          </fieldset>
-        </form>
-        <form id="edit-contact-form" class="overlay" style="display:none;">
-          <h2>Update Profile</h2>
-          <p id="edit-contact-jid">Select a buddy in the list above to update.</p>
-          <input id="edit-contact-name" type="text" maxlength="1024" placeholder="Real name" style="display:none;"/>
-          <fieldset class="buttons" style="display:none;">
-            <input id="edit-contact-cancel" type="button" value="Cancel"/>
-            <input id="edit-contact-ok" type="submit" value="Save"/>
-          </fieldset>
-        </form>
       </div>
       <div id="beta" class="primary column x-fill y-fill">
         <h2 id="chat-title">Select a buddy or service to start communicating</h2>
@@ -304,21 +186,9 @@ class SystemsPage
           <input id="message" name="message" type="text" maxlength="1024" placeholder="Type a message and press enter to send"/>
         </form>
       </div>
-      <div id="charlie" class="sidebar column y-fill">
-        <h2>Notifications</h2>
-        <ul id="notifications" class="scroll y-fill"></ul>
-        <div id="charlie-controls" class="controls">
-          <div id="clear-notices"></div>
-        </div>
-      </div>
     """).appendTo '#container'
 
     this.roster()
-
-    new Button '#clear-notices',  ICONS.no
-    new Button '#add-contact',    ICONS.plus
-    new Button '#remove-contact', ICONS.minus
-    new Button '#edit-contact',   ICONS.user
 
     $('#message').focus -> $('form.overlay').fadeOut()
     $('#message').keyup (e) =>
@@ -327,23 +197,6 @@ class SystemsPage
         when 40 then $('#message').val @commands.next()
 
     $('#message-form').submit  => this.send()
-
-    $('#clear-notices').click  -> $('#notifications li').fadeOut 200
-
-    $('#add-contact').click    => this.toggleForm '#add-contact-form'
-    $('#remove-contact').click => this.toggleForm '#remove-contact-form'
-    $('#edit-contact').click   => this.toggleForm '#edit-contact-form', =>
-      if @currentContact
-        $('#edit-contact-jid').text @currentContact
-        $('#edit-contact-name').val @session.roster[@currentContact].name
-
-    $('#add-contact-cancel').click    => this.toggleForm '#add-contact-form'
-    $('#remove-contact-cancel').click => this.toggleForm '#remove-contact-form'
-    $('#edit-contact-cancel').click   => this.toggleForm '#edit-contact-form'
-
-    $('#add-contact-form').submit    => this.addContact()
-    $('#remove-contact-form').submit => this.removeContact()
-    $('#edit-contact-form').submit   => this.updateContact()
 
     $('#container').show()
     layout = this.resize()
@@ -361,11 +214,7 @@ class SystemsPage
       close: fn
 
   resize: ->
-    a    = $ '#alpha'
-    b    = $ '#beta'
-    c    = $ '#charlie'
     msg  = $ '#message'
     form = $ '#message-form'
     new Layout ->
-      c.css 'left', a.width() + b.width()
       msg.width form.width() - 32
