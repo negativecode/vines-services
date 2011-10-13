@@ -173,7 +173,7 @@ class ServicesPage
           criteria you define. Send a command to the service and it runs
           on every system in the group.
         </p>
-        <input type="submit" id="blank-slate-add" value="Create a New Service"/>
+        <input type="submit" id="blank-slate-add" value="Add Service"/>
       </form>
     """).appendTo '#beta'
     $('#blank-slate').submit =>
