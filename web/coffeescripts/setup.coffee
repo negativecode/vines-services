@@ -48,17 +48,15 @@ class SetupPage
 
   userNode: (user) ->
     node = $("""
-      <li data-name="" data-jid="" id="#{user.jid}">
+      <li data-name="" data-jid="#{user.jid}" id="#{user.jid}">
         <span class="text"></span>
-        <span class="jid"></span>
+        <span class="jid">#{user.jid}</span>
       </li>
     """).appendTo '#users'
 
     name = this.userName(user)
     $('.text', node).text name
-    $('.jid', node).text user.jid
     node.attr 'data-name', name
-    node.attr 'data-jid', user.jid
     node.click (event) => this.selectUser event.currentTarget
     node
 
@@ -232,7 +230,7 @@ class SetupPage
     $("""
       <form id="blank-slate">
         <p>
-          Select a user account to edit or add a new user.
+          Select a user account to update or add a new user.
         </p>
         <input type="submit" id="blank-slate-add" value="Add User"/>
       </form>
@@ -326,7 +324,7 @@ class SetupPage
       list: '#users'
       icon: '#search-users-icon'
       form: '#search-users-form'
-      attrs: ['data-jid']
+      attrs: ['data-jid', 'data-name']
       open:  fn
       close: fn
 
