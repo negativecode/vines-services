@@ -129,15 +129,6 @@
   top: 2px;
   left: 3px;
 }
-#services-page #members li span.icon svg {
-  width: 15px;
-  height: 15px;
-}
-#services-page #members li span.server-name {
-  max-width:65px;display:inline-block; vertical-align:middle;text-overflow: ellipsis;
-  overflow: hidden;
-  white-space:nowrap;
-}
 #services-page #members li:hover:not(.selected) {
   background-color: #ededed;
   background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#e0e0e0));
@@ -166,16 +157,15 @@
 }
 #services-page #blank-slate {
   margin-top: -65px;
-  margin-left: -225px;
+  margin-left: -215px;
   text-align: center;
-  width: 450px;
+  width: 430px;
   position: absolute;
   top: 50%;
   left: 50%;
 }
 #services-page #blank-slate p {
-  color: rgba(0,0,0,0.4);
+  color: rgba(0, 0, 0, 0.3);
   font-size: 12pt;
-  font-weight: bold;
   margin-bottom: 20px;
 }
