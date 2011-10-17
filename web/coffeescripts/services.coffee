@@ -272,7 +272,7 @@ class ServicesPage
               <input id="name" type="text"/>
               <p id="name-error" class="error"></p>
               <label for="syntax">Criteria</label>
-              <textarea id="syntax" placeholder="fqdn like 'www.*' and platform in ['fedora', 'mac_os_x']"></textarea>
+              <textarea id="syntax" placeholder="fqdn starts with 'www.' and platform is 'mac_os_x'"></textarea>
               <p id="syntax-status"></p>
             </fieldset>
           </section>
