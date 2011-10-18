@@ -1,12 +1,12 @@
 class SystemsPage
   constructor: (@session) ->
     @session.onRoster   ( ) => this.roster()
-    @session.onCard     (c) => this.card(c)
     @session.onMessage  (m) => this.message(m)
     @session.onPresence (p) => this.presence(p)
     @commands = new Commands
     @chats = {}
     @currentContact = null
+    @layout = null
 
   datef: (millis) ->
     d = new Date(millis)
@@ -17,40 +17,40 @@ class SystemsPage
     minutes = '0' + minutes if minutes.length == 1
     hour + ':' + minutes + meridian
 
-  card: (card) ->
-    this.eachContact card.jid, (node) =>
-      $('.vcard-img', node).attr 'src', @session.avatar card.jid
+  groupContacts: ->
+    groups = {}
+    for jid, contact of @session.roster
+      for group in contact.groups
+        (groups[group] ||= []).push contact
+    groups
 
   roster: ->
-    roster = $('#roster')
+    groups = this.groupContacts()
+    sorted = (group for group, contacts of groups)
+    sorted = sorted.sort (a, b) ->
+      a = a.toLowerCase()
+      b = b.toLowerCase()
+      if a > b then 1 else if a < b then -1 else 0
 
-    $('li', roster).each (ix, node) =>
-      jid = $(node).attr('data-jid')
-      $(node).remove() unless @session.roster[jid]
-
-    setName = (node, contact) ->
-      $('.text', node).text contact.name || contact.jid
-      node.attr 'data-name', contact.name || ''
-      node.attr 'data-groups', contact.groups || ''
-
-    for jid, contact of @session.roster
-      found = $("#roster li[data-jid='#{jid}']")
-      setName(found, contact)
-      if found.length == 0
-        if contact.groups[0] == "Vines"
-          img_src = "images/default-service.png"
-        else
-          img_src = "#{@session.avatar jid}"
-        node = $("""
-          <li data-jid="#{jid}" data-name="" data-group="" class="offline">
+    items = $('#roster-items').empty()
+    for group in sorted
+      contacts = groups[group]
+      optgroup = $('<li class="group"></li>').appendTo items
+      optgroup.text group
+      optgroup.attr 'data-group', group
+      for contact in contacts
+        option = $("""
+          <li data-jid="#{contact.jid}">
             <span class="text"></span>
-            <span class="status-msg">Offline</span>
             <span class="unread" style="display:none;"></span>
-            <img class="vcard-img" id="#{jid}-avatar" alt="#{jid}" src="#{img_src}"/>
           </li>
-        """).appendTo roster
-        setName(node, contact)
-        node.click (event) => this.selectContact(event)
+        """).appendTo items
+        option.addClass 'offline' if contact.offline()
+        option.click (event) => this.selectContact event
+        name = contact.name || contact.jid.split('@')[0]
+        option.attr 'data-name', name
+        option.attr 'data-group', group
+        $('.text', option).text name
 
   message: (message) ->
     this.queueMessage message
@@ -60,7 +60,7 @@ class SystemsPage
     if me || from == @currentContact
       bottom = this.atBottom()
       this.appendMessage message
-      this.scroll() if bottom
+      this.scroll({animate: true}) if bottom
     else
       chat = this.chat message.from
       chat.unread++
@@ -68,7 +68,7 @@ class SystemsPage
         $('.unread', node).text(chat.unread).show()
 
   eachContact: (jid, callback) ->
-    for node in $("#roster li[data-jid='#{jid}']").get()
+    for node in $("#roster-items li[data-jid='#{jid}']").get()
       callback $(node)
 
   appendMessage: (message) ->
@@ -109,7 +109,6 @@ class SystemsPage
     if !presence.type || presence.offline
       contact = @session.roster[from]
       this.eachContact from, (node) ->
-        $('.status-msg', node).text contact.status()
         if contact.offline()
           node.addClass 'offline'
         else
@@ -119,16 +118,22 @@ class SystemsPage
       this.chat(from).jid = from
 
   selectContact: (event) ->
-    jid = $(event.currentTarget).attr 'data-jid'
+    $('#blank-slate').fadeOut(200, -> $(this).remove())
+    $('#roster').hide()
+
+    selected = $(event.currentTarget)
+    jid = selected.attr 'data-jid'
     contact = @session.roster[jid]
     return if @currentContact == jid
     @currentContact = jid
 
-    $('#roster li').removeClass 'selected'
-    $(event.currentTarget).addClass 'selected'
-    $('#chat-title').text('Chat with ' + (contact.name || contact.jid))
+    $('#message-label').text $('.text', selected).text()
     $('#messages').empty()
+    $('#message').focus()
+    @layout.resize()
+    this.restoreChat(jid)
 
+  restoreChat: (jid) ->
     chat = @chats[jid]
     messages = []
     if chat
@@ -136,13 +141,16 @@ class SystemsPage
       chat.unread = 0
       this.eachContact jid, (node) ->
         $('.unread', node).text('').hide()
-
     this.appendMessage msg for msg in messages
     this.scroll()
 
-  scroll: ->
+  scroll: (opts) ->
+    opts ||= {}
     msgs = $ '#messages'
-    msgs.animate(scrollTop: msgs.prop('scrollHeight'), 400)
+    if opts.animate
+      msgs.animate(scrollTop: msgs.prop('scrollHeight'), 400)
+    else
+      msgs.scrollTop msgs.prop('scrollHeight')
 
   atBottom: ->
     msgs = $('#messages')
@@ -166,6 +174,22 @@ class SystemsPage
     input.val ''
     false
 
+  drawBlankSlate: ->
+    $("""
+      <form id="blank-slate" class="float">
+        <p>
+          Services, and individual systems, can be controlled by sending
+          them shell commands through this terminal. Select a system to chat with
+          to get started.
+        </p>
+        <input type="submit" value="Select System"/>
+      </form>
+    """).appendTo '#alpha'
+    $('#blank-slate').submit =>
+      $('#roster').show()
+      @layout.resize()
+      false
+
   draw: ->
     unless @session.connected()
       window.location.hash = ''
@@ -174,48 +198,60 @@ class SystemsPage
     $('body').attr 'id', 'systems-page'
     $('#container').hide().empty()
     $("""
-      <div id="alpha" class="sidebar column y-fill">
-        <h2>Buddies <div id="search-roster-icon"></div></h2>
-        <div id="search-roster-form"></div>
-        <ul id="roster" class="selectable scroll y-fill"></ul>
-      </div>
-      <div id="beta" class="primary column x-fill y-fill">
-        <h2 id="chat-title">Select a buddy or service to start communicating</h2>
+      <div id="alpha" class="primary column x-fill y-fill">
         <ul id="messages" class="scroll y-fill"></ul>
         <form id="message-form">
-          <label id="message-label" for="message">$</label>
+          <label id="message-label"></label>
           <input id="message" name="message" type="text" maxlength="1024" placeholder="Type a command and press enter to send"/>
         </form>
+        <div id="roster" class="float" style="display:none;">
+          <ul id="roster-items"></ul>
+          <div id="roster-form"></div>
+        </div>
       </div>
     """).appendTo '#container'
+    $('#message-form').submit => this.send()
+    $('#messages').click -> $('#roster').hide()
+    $('#message').focus  -> $('#roster').hide()
 
     this.roster()
+    $('#message-label').click =>
+      $('#roster').toggle()
 
-    $('#message').focus -> $('form.overlay').fadeOut()
     $('#message').keyup (e) =>
       switch e.keyCode # up, down keys trigger history
         when 38 then $('#message').val @commands.prev()
         when 40 then $('#message').val @commands.next()
 
-    $('#message-form').submit  => this.send()
+    if @currentContact
+      this.restoreChat(@currentContact) if @currentContact
+      contact = @session.roster[@currentContact]
+      name = contact.name || contact.jid.split('@')[0]
+      $('#message-label').text name
+      $('#message').focus()
+    else
+      this.drawBlankSlate()
 
     $('#container').show()
-    layout = this.resize()
-
-    fn = ->
-      layout.resize()
-      layout.resize() # not sure why two are needed
+    @layout = this.resize()
+    this.scroll()
 
     new Filter
-      list: '#roster'
-      icon: '#search-roster-icon'
-      form: '#search-roster-form'
+      list: '#roster-items'
+      form: '#roster-form'
       attrs: ['data-jid', 'data-name']
-      open:  fn
-      close: fn
+    $('form', '#roster-form').show()
 
   resize: ->
-    msg  = $ '#message'
-    form = $ '#message-form'
+    container = $ '#container'
+    roster    = $ '#roster'
+    items     = $ '#roster-items'
+    rform     = $ '#roster-form'
+    msg       = $ '#message'
+    form      = $ '#message-form'
+    label     = $ '#message-label'
     new Layout ->
-      msg.width form.width() - 32
+      msg.width form.width() - label.width() - 32
+      height = container.height() - form.height() - 10
+      roster.css 'max-height', height
+      items.css 'max-height', height - rform.outerHeight() - 10
