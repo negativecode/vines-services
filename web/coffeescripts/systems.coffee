@@ -73,7 +73,8 @@ class SystemsPage
 
   appendMessage: (message) ->
     me      = message.from == @session.jid()
-    from    = message.from.split('/')[0]
+    proxied = $('jid', message.node).text()
+    from    = (proxied || message.from).split('/')[0]
     contact = @session.roster[from]
     name    = if contact then (contact.name || from) else from
     node    = $("""<li data-jid="#{from}"><pre></pre></li>""").appendTo '#messages'

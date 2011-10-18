@@ -19,18 +19,23 @@ module Vines
         private
 
         # Forward the agent's response message to the user that sent it the
-        # command.
+        # command. Tag the message with a jid element, identifying the agent
+        # returning the command's output, like:
+        # <jid xmlns="http://getvines.com/protocol">
+        #   www01.wonderland.lit@wonderland.lit/vines
+        # </jid>.
         def forward_to_user
           jid = node.xpath('/message/ns:jid', 'ns' => NS).first
           return unless jid
-          jid.remove
+          agent = node.from
           node.from = node.to
           node.to = jid.content
+          jid.content = agent
           stream.write(node)
         end
 
         # Forward the user's message to the members of the service. Tag the
-        # message with a jid element, identifying the user executing the command
+        # message with a jid element, identifying the user executing the command,
         # like: <jid xmlns="http://getvines.com/protocol">alice@wonderland.lit/tea</jid>
         # When the agent receives a message from one of its services, it checks
         # this jid element for the user permissions with which to run the command.
