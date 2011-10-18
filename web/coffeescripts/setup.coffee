@@ -134,6 +134,12 @@ class SetupPage
         $('#password-error').text 'Password must be at least 8 characters.'
         valid = false
 
+      # admin updating a user's password
+      if @session.bareJid() != @selected.jid
+        if password1 != password2
+          $('#password-error').text 'Passwords must match.'
+          valid = false
+
     else # new user
       if node == ''
         $('#user-name-error').text 'User name is required.'
@@ -158,7 +164,7 @@ class SetupPage
     valid
 
   saveUser: ->
-    return unless this.validateUser()
+    return false unless this.validateUser()
     user =
       jid: $('#jid').val()
       username: $('#user-name').val()
@@ -199,7 +205,7 @@ class SetupPage
     valid
 
   saveSystem: ->
-    return unless this.validateSystem()
+    return false unless this.validateSystem()
     user =
       jid: $('#jid').val()
       username: $('#user-name').val()
@@ -400,7 +406,9 @@ class SetupPage
       """).prependTo '#jid-fields'
 
       $('#name').focus()
-
+      if @session.bareJid() != user.jid
+        $('#password1-label').text 'Password'
+        $('#password2-label').text 'Password Again'
       $('#jid').val user.jid
       $('#name').val user.name
       $('#user-name').val user.jid.split('@')[0]
