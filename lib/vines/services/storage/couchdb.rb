@@ -100,20 +100,13 @@ module Vines
         end
 
         def create_views
-          # FIXME Use views in CouchRest::Model classes to populate db
-          designs = {}
-
           EM.run do
-            http('', :put) do # create db
-              designs.each do |name, views|
-                get("/_design/#{name}") do |doc|
-                  doc ||= {"_id" => "_design/#{name}"}
-                  doc['language'] = 'javascript'
-                  doc['views'] = views
-                  save(doc) { EM.stop }
-                end
+            Fiber.new do
+              CouchRest::Model::Base.subclasses.each do |klass|
+                klass.save_design_doc! if klass.respond_to?(:save_design_doc!)
               end
-            end
+              EM.stop
+            end.resume
           end
         end
 
@@ -146,6 +139,9 @@ module Vines
           *url, _ = @url.split('/')
           server = CouchRest::Server.new(url.join('/'))
           CouchRest::Model::Base.database = server.database(database)
+          CouchRest::Model::Base.configure do |config|
+            config.auto_update_design_doc = false
+          end
         end
 
         def escape(jid)
