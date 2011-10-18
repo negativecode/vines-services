@@ -11,18 +11,25 @@ module Vines
           raise "Directory already initialized: #{@domain}" if File.exists?(base)
           raise "Agent gem required: gem install vines-agent" unless agent_gem_installed?
 
-          @db = find_db
-          save_user(ask_for_jid, ask_for_password)
-          @token = Kit.auth_token
+          EM.run do
+            Fiber.new do
+              @db = find_db
+              create_views
+              user = save_user(ask_for_jid, ask_for_password)
+              create_services(user)
+              @token = Kit.auth_token
 
-          Dir.mkdir(base)
-          %w[server services agent].each do |sub|
-            dir = File.expand_path(sub, base)
-            Dir.mkdir(dir)
-            Dir.chdir(dir) { send("init_#{sub}") }
+              Dir.mkdir(base)
+              %w[server services agent].each do |sub|
+                dir = File.expand_path(sub, base)
+                Dir.mkdir(dir)
+                Dir.chdir(dir) { send("init_#{sub}") }
+              end
+              puts "Initialized server, agent, and services directories: #{@domain}"
+              puts "Login at http://localhost:5280/"
+              EM.stop
+            end.resume
           end
-          puts "Initialized server, agent, and services directories: #{@domain}"
-          puts "Login at http://localhost:5280/"
         end
 
         private
@@ -67,6 +74,14 @@ module Vines
           false
         end
 
+        def create_views
+          url = "http://#{@db[:host]}:#{@db[:port]}"
+          CouchRest::Model::Base.database = CouchRest::Server.new(url).database(@db[:name])
+          CouchRest::Model::Base.subclasses.each do |klass|
+            klass.save_design_doc! if klass.respond_to?(:save_design_doc!)
+          end
+        end
+
         def find_db
           host, port = 'localhost', 5984
           db = @domain.downcase.gsub('.', '_')
@@ -93,17 +108,14 @@ module Vines
         end
 
         def save_user(jid, password, system=false)
-          server = CouchRest::Server.new("http://#{@db[:host]}:#{@db[:port]}")
-          CouchRest::Model::Base.database = server.database(@db[:name])
-          Fiber.new do
-            Vines::Services::CouchModels::User.new.tap do |user|
-              user.id = "user:#{jid}"
-              user.password = password
-              user.system = system
-              user.admin! unless system
-            end.save
-          end.resume
-          puts "\nCreated user: #{jid}"
+          user = Vines::Services::CouchModels::User.new.tap do |u|
+            u.id = "user:#{jid}"
+            u.plain_password = password
+            u.system = system
+            u.admin! unless system
+          end.save
+          puts "Created user: #{jid}"
+          user
         end
 
         def ask_for_jid
@@ -125,7 +137,7 @@ module Vines
             password = $stdin.gets.chomp
             password = nil if password.empty?
             `stty echo`
-            puts unless password
+            puts
           end
           password
         end
@@ -133,11 +145,46 @@ module Vines
         # Return the fully qualified domain name for this machine. This is used
         # to determine the agent's JID.
         def fqdn
+          ohai.fqdn.downcase
+        end
+
+        def ohai
           require 'ohai'
-          system = Ohai::System.new
-          system.require_plugin('os')
-          system.require_plugin('hostname')
-          system.fqdn.downcase
+          @ohai ||= Ohai::System.new.tap do |system|
+            system.require_plugin('os')
+            system.require_plugin('hostname')
+            system.require_plugin('network')
+            system.require_plugin('platform')
+          end
+        end
+
+        # Create some default services based on this system's information. This
+        # gives the user some examples from which to build.
+        def create_services(user)
+          require 'etc'
+          ip = ohai.ipaddress.match(/(\d*\.\d*\.\d*)\.\d*/)[1]
+          platform = case ohai.platform
+            when 'mac_os_x' then 'Mac OS X'
+            else ohai.platform.capitalize
+          end
+          {
+            "All Systems" => "uptime_seconds > 0",
+            "#{ohai.kernel['name']} Systems" => "kernel.name is '#{ohai.kernel['name']}'",
+            "Domain: #{ohai.domain}" => "domain is '#{ohai.domain}'",
+            "#{platform} Systems" => "platform is '#{ohai.platform}'",
+            "Network: #{ip}.x" => "ipaddress starts with '#{ip}.'"
+          }.each do |name, code|
+            Vines::Services::CouchModels::Service.new(
+              name: name,
+              jid: to_jid(name),
+              code: code,
+              users: [user.jid],
+              accounts: [Etc.getlogin]).save
+          end
+        end
+
+        def to_jid(name)
+          Blather::JID.new(CGI.escape(name), @domain).to_s.downcase
         end
 
         def update_services_config(config)
