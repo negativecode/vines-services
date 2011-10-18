@@ -69,7 +69,7 @@ module Vines
           self.manage_users = perms['users']
         end
 
-        def password=(desired)
+        def plain_password=(desired)
           desired = (desired || '').strip
           raise 'password too short' if desired.size < (system ? 128 : 8)
           write_attribute('password', BCrypt::Password.create(desired))
@@ -78,7 +78,7 @@ module Vines
         def change_password(previous, desired)
           hash = BCrypt::Password.new(password) rescue nil
           raise 'password failure' unless hash && hash == previous
-          self.password = desired
+          self.plain_password = desired
         end
 
         def jid

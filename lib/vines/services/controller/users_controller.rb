@@ -39,28 +39,29 @@ module Vines
             raise 'user already exists' if User.find(id)
             User.new(id: id).tap do |u|
               u.system = system
-              u.password = password1
+              u.plain_password = password1
             end
           else # existing user
             User.get!("user:%s" % Vines::JID.new(jid)).tap do |u|
               raise "record found, but is a #{u.system ? 'system' : 'user'}" unless u.system == system
               if system
-                u.password = password1 unless password1.empty?
+                u.plain_password = password1 unless password1.empty?
               else # humans
-                u.change_password(password1, password2) unless password1.empty? || password2.empty?
+                if u.jid == current_user.jid
+                  u.change_password(password1, password2) unless password1.empty? || password2.empty?
+                else
+                  u.plain_password = password1 unless password1.empty?
+                end
               end
             end
           end
 
           unless system
             user.name = name
-            if user.jid == current_user.jid && !current_user.manage_services
-              if obj['permissions']['systems'] == true
-                user.valid = false
-                send_error('not-acceptable')
-              end
+            # users can't set their own permissions
+            unless user.jid == current_user.jid
+              user.permissions = obj['permissions']
             end
-            user.permissions = obj['permissions']
           end
 
           if user.valid?
@@ -85,8 +86,7 @@ module Vines
         end
 
         def save_services(user, services)
-          return if user.system?
-          return unless user.permissions['manage_services']
+          return if user.system? || !user.manage_services?
           current = user.services.map {|s| s.id }
           members = []
 
