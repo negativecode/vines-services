@@ -184,7 +184,7 @@ module Vines
         end
 
         def to_jid(name)
-          Blather::JID.new(CGI.escape(name), @domain).to_s.downcase
+          Blather::JID.new(CGI.escape(name), "vines.#{@domain}").to_s.downcase
         end
 
         def update_services_config(config)
