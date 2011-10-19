@@ -22,7 +22,7 @@ Additional documentation can be found at www.getvines.com.
 == Dependencies
 
 * bcrypt-ruby >= 3.0.1
-* blather >= 0.5.7
+* blather >= 0.5.8
 * citrus >= 2.4.0
 * eventmachine >= 0.12.10
 * sqlite3 >= 1.3.4

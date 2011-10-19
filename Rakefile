@@ -26,7 +26,7 @@ and permissions are managed via the bundled web application."
   s.require_path = "lib"
 
   s.add_dependency "bcrypt-ruby", "~> 3.0.1"
-  s.add_dependency "blather", "~> 0.5.7"
+  s.add_dependency "blather", "~> 0.5.8"
   s.add_dependency "citrus", "~> 2.4.0"
   s.add_dependency "couchrest_model", "~> 1.1.2"
   s.add_dependency "em-http-request", "~> 0.3.0"
