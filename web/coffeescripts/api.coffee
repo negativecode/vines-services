@@ -1,5 +1,11 @@
 class Api
+  USERS = 'http://getvines.com/protocol/users'
+
   constructor: (@session) ->
+    @user = null
+    @session.onRoster =>
+      this.get USERS, jid: @session.bareJid(), (result) =>
+        @user = result
 
   jid: -> "vines.#{@session.bareJid().split('@')[1]}"
 

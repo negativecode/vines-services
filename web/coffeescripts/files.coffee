@@ -211,31 +211,35 @@ class FilesPage
       </div>
     """).appendTo '#container'
 
-    $('#file-chooser').change (event) =>
-      @uploads.queue event.target.files
-      $('#file-chooser').val ''
+    if @api.user.permissions.files
+      $('#file-chooser').change (event) =>
+        @uploads.queue event.target.files
+        $('#file-chooser').val ''
 
-    $('#file-form').submit ->
-      $('#file-chooser').click()
-      false
+      $('#file-form').submit ->
+        $('#file-chooser').click()
+        false
 
-    $('#upload-dnd').bind 'dragenter', (event) ->
-      event.stopPropagation()
-      event.preventDefault()
-      $('#upload-dnd').css 'color', '#444'
+      $('#upload-dnd').bind 'dragenter', (event) ->
+        event.stopPropagation()
+        event.preventDefault()
+        $('#upload-dnd').css 'color', '#444'
 
-    $('#upload-dnd').bind 'dragleave', (event) ->
-      $('#upload-dnd').css 'color', '#ababab'
+      $('#upload-dnd').bind 'dragleave', (event) ->
+        $('#upload-dnd').css 'color', '#ababab'
 
-    $('#upload-dnd').bind 'dragover', (event) ->
-      event.stopPropagation()
-      event.preventDefault()
+      $('#upload-dnd').bind 'dragover', (event) ->
+        event.stopPropagation()
+        event.preventDefault()
 
-    $('#upload-dnd').bind 'drop', (event) =>
-      event.stopPropagation()
-      event.preventDefault()
-      $('#upload-dnd').css 'color', '#ababab'
-      @uploads.queue event.originalEvent.dataTransfer.files
+      $('#upload-dnd').bind 'drop', (event) =>
+        event.stopPropagation()
+        event.preventDefault()
+        $('#upload-dnd').css 'color', '#ababab'
+        @uploads.queue event.originalEvent.dataTransfer.files
+    else
+      $('#upload-dnd').text "Your account cannot upload files."
+      $('#file-form').remove()
 
     this.findLabels()
     this.findFiles()

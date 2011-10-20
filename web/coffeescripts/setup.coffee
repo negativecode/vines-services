@@ -31,7 +31,7 @@ class SetupPage
       """).appendTo '#services'
       $('label', node).text service.name
     $('#services input[type="checkbox"]').val @selected.services if @selected
-    if @selected && !@selected.permissions['services']
+    if @selected && !@api.user.permissions.services
       $('#services input[type="checkbox"]').prop 'disabled', true
 
   findUsers: ->
@@ -103,10 +103,18 @@ class SetupPage
         $('#beta-header').text 'Users'
         this.drawUsers()
         this.drawUserBlankSlate()
+        if @api.user.permissions.users
+          $('#beta-controls div').show()
+        else
+          $('#beta-controls div').hide()
       when 'systems-nav'
         $('#beta-header').text 'Systems'
         this.drawUsers()
         this.drawSystemBlankSlate()
+        if @api.user.permissions.systems
+          $('#beta-controls div').show()
+        else
+          $('#beta-controls div').hide()
 
   toggleForm: (form, fn) ->
     form = $(form)
@@ -233,14 +241,18 @@ class SetupPage
 
   drawUserBlankSlate: ->
     $('#charlie').empty()
+    msg = if @api.user.permissions.users
+      'Select a user account to update or add a new user.'
+    else
+      'Select a user account to update.'
+
     $("""
       <form id="blank-slate">
-        <p>
-          Select a user account to update or add a new user.
-        </p>
+        <p>#{msg}</p>
         <input type="submit" id="blank-slate-add" value="Add User"/>
       </form>
     """).appendTo '#charlie'
+    $('#blank-slate-add').remove() unless @api.user.permissions.users
     $('#blank-slate').submit =>
       this.drawUserEditor()
       false
@@ -256,6 +268,7 @@ class SetupPage
         <input type="submit" id="blank-slate-add" value="Add System"/>
       </form>
     """).appendTo '#charlie'
+    $('#blank-slate-add').remove() unless @api.user.permissions.systems
     $('#blank-slate').submit =>
       this.drawSystemEditor()
       false
@@ -299,6 +312,7 @@ class SetupPage
       </div>
       <div id="charlie" class="primary column x-fill y-fill"></div>
     """).appendTo '#container'
+
     this.drawUserBlankSlate()
 
     $('#setup li').click (event) => this.selectTask event
@@ -311,6 +325,9 @@ class SetupPage
 
     new Button '#add-user',    ICONS.plus
     new Button '#remove-user', ICONS.minus
+
+    $('#beta-controls div').hide() unless @api.user.permissions.users
+    $('#systems-nav').hide() unless @api.user.permissions.systems
 
     $('#add-user').click =>
       if $('#users-nav').hasClass 'selected'

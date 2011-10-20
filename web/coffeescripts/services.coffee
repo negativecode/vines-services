@@ -176,6 +176,7 @@ class ServicesPage
         <input type="submit" id="blank-slate-add" value="Add Service"/>
       </form>
     """).appendTo '#beta'
+    $('#blank-slate-add').remove() unless @api.user.permissions.services
     $('#blank-slate').submit =>
       this.drawEditor()
       false
@@ -217,6 +218,8 @@ class ServicesPage
 
     new Button '#add-service',    ICONS.plus
     new Button '#remove-service', ICONS.minus
+
+    $('#alpha-controls div').remove() unless @api.user.permissions.services
 
     this.drawBlankSlate()
 
