@@ -26,7 +26,7 @@ module Vines
                 Dir.chdir(dir) { send("init_#{sub}") }
               end
               puts "Initialized server, agent, and services directories: #{@domain}"
-              puts "Login at http://localhost:5280/"
+              puts "Login as #{user.jid} at http://localhost:5280/"
               EM.stop
             end.resume
           end
