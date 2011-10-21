@@ -50,3 +50,9 @@ form.sections .error {
   font-size: 8pt;
   width: 89%;
 }
+.hint {
+  color: #aaa;
+  font-size: 8pt;
+  line-height: 1;
+  margin-top: 3px;
+}

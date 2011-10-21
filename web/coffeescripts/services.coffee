@@ -292,6 +292,7 @@ class ServicesPage
               <ul id="users" class="scroll"></ul>
               <label for="unix-users">Unix Accounts</label>
               <input id="unix-users" type="text"/>
+              <p class="hint">Comma separated user names like: apache, postgres, root, etc.</p>
             </fieldset>
           </section>
         </div>
