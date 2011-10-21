@@ -236,6 +236,7 @@ class SystemsPage
     $('#container').show()
     @layout = this.resize()
     this.scroll()
+    $('#message').focus()
 
     new Filter
       list: '#roster-items'
