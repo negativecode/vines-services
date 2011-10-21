@@ -88,9 +88,9 @@ module Vines
           until create_db(host, port, db)
             puts "CouchDB connection failed"
             $stdout.write('CouchDB Host: ')
-            host = $stdin.gets.chomp
+            host = $stdin.gets.strip
             $stdout.write('CouchDB Port: ')
-            port = $stdin.gets.chomp
+            port = $stdin.gets.strip
           end
           {host: host, port: port, name: db}
         end
@@ -119,10 +119,11 @@ module Vines
         end
 
         def ask_for_jid
+          puts "Creating a new chat user account"
           jid = nil
           until jid
-            $stdout.write('JID: ')
-            if node = $stdin.gets.chomp.split('@').first
+            $stdout.write('User ID: ')
+            if node = $stdin.gets.strip.split('@').first
               jid = Vines::JID.new(node, @domain) rescue nil
             end
           end
@@ -130,14 +131,16 @@ module Vines
         end
 
         def ask_for_password
+          at_exit { `stty echo` }
           password = nil
           until password
             $stdout.write('Password: ')
             `stty -echo`
-            password = $stdin.gets.chomp
-            password = nil if password.empty?
+            password = $stdin.gets.strip
+            password = nil if password.empty? || password.length < 8
             `stty echo`
             puts
+            puts 'Must be at least 8 characters' unless password
           end
           password
         end
