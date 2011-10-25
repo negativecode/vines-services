@@ -21,7 +21,6 @@
   margin-bottom: 20px;
 }
 #systems-page #messages {
-  height: 100%;
   list-style: none;
   width: 100%;
 }
@@ -46,8 +45,6 @@
 }
 #systems-page #message-form {
   height: 25px;
-  position: absolute;
-  bottom: 0;
   width: 100%;
 }
 #systems-page #message-label {
@@ -80,31 +77,34 @@
   box-shadow: none;
 }
 #systems-page #roster {
-  background: #fff;
-  border: 1px solid #c4c4c4;
-  border-radius: 5px;
-  box-shadow: 0 10px 15px rgba(0,0,0, 0.15);
-  padding-top: 3px;
+  background: rgba(60, 60, 60, 0.98);
+  border: 2px solid rgb(12, 12, 12);
+  border-radius: 3px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.75);
+  min-width: 250px;
   position: absolute;
-  bottom: 25px;
   left: 10px;
 }
 #systems-page #roster-items {
-  font-family: "Lucida Grande", Helvetica, sans-serif;
-  font-size: 11px;
-  margin-bottom: 3px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
   overflow-y: auto;
+  text-shadow: 0 1px 1px rgb(21, 21, 21);
 }
 #systems-page #roster-items li {
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-  line-height: 1.5;
+  border-top: 1px solid rgb(80, 80, 80);
+  border-bottom: 1px solid rgb(48, 48, 48);
+  line-height: 38px;
   list-style: none;
   padding-right: 50px;
   position: relative;
 }
 #systems-page #roster-items li.offline {
-  color: rgba(0, 0, 0, 0.25);
+  color: #888;
+}
+#systems-page #roster-items li.offline .icon {
+  opacity: 0.3;
 }
 #systems-page #roster-items li:hover:not(.group) {
   background: #319be7;
@@ -113,40 +113,58 @@
   background: -o-linear-gradient(#319be7, #1b78d9);
   background: -webkit-linear-gradient(#319be7, #1b78d9);
   border-top: 1px solid #148ddf;
-  border-bottom: 1px solid #095bba;
   color: #fff;
   cursor: pointer;
   text-shadow: -1px 1px 1px hsl(210, 51%, 45%), 0px -1px 1px hsl(210, 51%, 49%);
 }
-#systems-page #roster-items li:not(.group) {
-  padding-left: 3em;
-}
 #systems-page #roster-items li.group {
-  color: #808080;
-  padding-left: 20px;
+  background: #404040;
+  background: -moz-linear-gradient(#404040, #353535);
+  background: -ms-linear-gradient(#404040, #353535);
+  background: -o-linear-gradient(#404040, #353535);
+  background: -webkit-linear-gradient(#404040, #353535);
+  color: #ccc;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 2;
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+#systems-page #roster-items li .icon {
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  top: 2px;
+}
+#systems-page #roster-items li .icon svg {
+  height: 32px;
+  width: 32px;
+}
+#systems-page #roster-items li .text {
+  padding-left: 32px;
 }
 #systems-page #roster-items li .unread {
-  color: #c0c0c0;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 30px;
+  color: #fff;
   display: inline-block;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: bold;
   line-height: 15px;
+  padding: 0 6px;
   position: absolute;
   right: 10px;
-  top: 1px;
+  top: 12px;
 }
 #systems-page #roster-items li:hover .unread {
   color: #fff;
 }
 #systems-page #roster-form {
-  background: #f8f8f8;
-  background: -moz-linear-gradient(#f8f8f8, #eee);
-  background: -ms-linear-gradient(#f8f8f8, #eee);
-  background: -o-linear-gradient(#f8f8f8, #eee);
-  background: -webkit-linear-gradient(#f8f8f8, #eee);
-  border-top: 1px solid #c4c4c4;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
+  background: rgb(80, 80, 80);
+  background: -moz-linear-gradient(rgb(80,80,80), rgb(48, 48, 48));
+  background: -ms-linear-gradient(rgb(80,80,80), rgb(48, 48, 48));
+  background: -o-linear-gradient(rgb(80,80,80), rgb(48, 48, 48));
+  background: -webkit-linear-gradient(rgb(80,80,80), rgb(48, 48, 48));
   padding: 3px 5px;
 }
 #systems-page #roster-form form {

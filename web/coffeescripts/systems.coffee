@@ -41,6 +41,7 @@ class SystemsPage
       for contact in contacts
         option = $("""
           <li data-jid="#{contact.jid}">
+            <span class="icon"></span>
             <span class="text"></span>
             <span class="unread" style="display:none;"></span>
           </li>
@@ -51,6 +52,17 @@ class SystemsPage
         option.attr 'data-name', name
         option.attr 'data-group', group
         $('.text', option).text name
+        opts =
+          fill: '#fff'
+          stroke: '#404040'
+          'stroke-width': 0.3
+          opacity: 1.0
+          scale: 0.65
+        icon = switch group
+          when 'People'   then ICONS.man
+          when 'Services' then ICONS.magic
+          else ICONS.run
+        new Button $('.icon', option), icon, opts
 
   message: (message) ->
     this.queueMessage message
@@ -121,6 +133,7 @@ class SystemsPage
   selectContact: (event) ->
     $('#blank-slate').fadeOut(200, -> $(this).remove())
     $('#roster').hide()
+    $('#message').focus()
 
     selected = $(event.currentTarget)
     jid = selected.attr 'data-jid'
@@ -130,7 +143,6 @@ class SystemsPage
 
     $('#message-label').text $('.text', selected).text()
     $('#messages').empty()
-    $('#message').focus()
     @layout.resize()
     this.restoreChat(jid)
 
@@ -175,6 +187,28 @@ class SystemsPage
     input.val ''
     false
 
+  showRoster: ->
+    container = $ '#container'
+    msg       = $ '#message'
+    form      = $ '#message-form'
+    roster    = $ '#roster'
+    items     = $ '#roster-items'
+    rform     = $ '#roster-form'
+
+    up = container.height() - msg.position().top < container.height() / 2
+    if up
+      roster.css 'top', ''
+      roster.css 'bottom', form.outerHeight() + 'px'
+      height = container.height() - form.outerHeight() - 20
+    else
+      roster.css 'bottom', ''
+      roster.css 'top', (msg.position().top + form.outerHeight()) + 'px'
+      height = container.height() - msg.position().top - 30
+
+    items.css 'max-height', (height - rform.outerHeight() - 40)  + 'px'
+    roster.css 'max-height', height + 'px'
+    roster.show()
+
   drawBlankSlate: ->
     $("""
       <form id="blank-slate" class="float">
@@ -187,7 +221,7 @@ class SystemsPage
       </form>
     """).appendTo '#alpha'
     $('#blank-slate').submit =>
-      $('#roster').show()
+      this.showRoster()
       @layout.resize()
       false
 
@@ -200,7 +234,7 @@ class SystemsPage
     $('#container').hide().empty()
     $("""
       <div id="alpha" class="primary column x-fill y-fill">
-        <ul id="messages" class="scroll y-fill"></ul>
+        <ul id="messages" class="scroll"></ul>
         <form id="message-form">
           <label id="message-label"></label>
           <input id="message" name="message" type="text" maxlength="1024" placeholder="Type a command and press enter to send"/>
@@ -214,10 +248,16 @@ class SystemsPage
     $('#message-form').submit => this.send()
     $('#messages').click -> $('#roster').hide()
     $('#message').focus  -> $('#roster').hide()
+    $(document).keyup (e) ->
+      $('#roster').hide() if e.keyCode == 27 # escape
 
     this.roster()
     $('#message-label').click =>
-      $('#roster').toggle()
+      roster = $('#roster')
+      if roster.is(':visible')
+        roster.hide()
+      else
+        this.showRoster()
 
     $('#message').keyup (e) =>
       switch e.keyCode # up, down keys trigger history
@@ -246,14 +286,10 @@ class SystemsPage
 
   resize: ->
     container = $ '#container'
-    roster    = $ '#roster'
-    items     = $ '#roster-items'
-    rform     = $ '#roster-form'
+    msgs      = $ '#messages'
     msg       = $ '#message'
     form      = $ '#message-form'
     label     = $ '#message-label'
     new Layout ->
       msg.width form.width() - label.width() - 32
-      height = container.height() - form.height() - 10
-      roster.css 'max-height', height
-      items.css 'max-height', height - rform.outerHeight() - 10
+      msgs.css 'max-height', container.height() - form.height()
