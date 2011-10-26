@@ -29,6 +29,7 @@ module Vines
         validates_uniqueness_of :jid
         validates_presence_of :jid
         validate :compile_view
+        validate :presence_of_account
 
         design do
           view :by_name,
@@ -153,6 +154,12 @@ module Vines
           VQL::Compiler.new.to_js(code)
         rescue Exception => e
           errors.add(:base, e.message)
+        end
+
+        def presence_of_account
+          accounts.map! {|a| a.strip }.reject! {|a| a.empty? }
+          accounts.sort!.uniq!
+          errors.add(:base, 'At least one user account is required.') if accounts.empty?
         end
 
         def update_views

@@ -116,7 +116,7 @@ class ServicesPage
 
     # only validate if text changed
     prev = $('#syntax').data 'prev'
-    code = $.trim $('#syntax').val()
+    code = $('#syntax').val().trim()
     $('#syntax').data 'prev', code
     return unless code && code != prev
 
@@ -131,24 +131,31 @@ class ServicesPage
 
   validateForm: ->
     $('#name-error').empty()
+    $('#unix-users-error').empty()
     valid = true
 
-    name = $.trim $('#name').val()
+    name = $('#name').val().trim()
     if name == ''
       $('#name-error').text 'Name is required.'
       valid = false
 
+    if this.accounts().length == 0
+      $('#unix-users-error').text 'At least one user account is required.'
+      valid = false
+
     valid
 
-  save: ->
-    return unless this.validateForm()
-    users = $('#users :checked').map(-> $(this).val()).get()
+  accounts: ->
     accounts = $('#unix-users').val().split(',')
-    accounts = ($.trim u for u in accounts when $.trim(u).length > 0)
+    (u.trim() for u in accounts when u.trim().length > 0)
+
+  save: ->
+    return false unless this.validateForm()
+    users = $('#users :checked').map(-> $(this).val()).get()
     service =
       name: $('#name').val()
       code: $('#syntax').val()
-      accounts: accounts
+      accounts: this.accounts()
       users: users
     service['id'] = $('#id').val() if $('#id').val().length > 0
 
@@ -292,6 +299,7 @@ class ServicesPage
               <ul id="users" class="scroll"></ul>
               <label for="unix-users">Unix Accounts</label>
               <input id="unix-users" type="text"/>
+              <p id="unix-users-error" class="error"></p>
               <p class="hint">Comma separated user names like: apache, postgres, root, etc.</p>
             </fieldset>
           </section>
