@@ -39,6 +39,7 @@
   font-family: Menlo, monospace;
   font-size: 11px;
   line-height: 1.3;
+  word-wrap: break-word;
 }
 #systems-page #messages li footer {
   font-weight: bold;
