@@ -72,7 +72,7 @@ class SystemsPage
     if me || from == @currentContact
       bottom = this.atBottom()
       this.appendMessage message
-      this.scroll({animate: true}) if bottom
+      this.scroll({animate: true}) if bottom || me
     else
       chat = this.chat message.from
       chat.unread++
@@ -92,6 +92,7 @@ class SystemsPage
     node    = $("""<li data-jid="#{from}"><pre></pre></li>""").appendTo '#messages'
     prefix  = if me then '$ ' else ''
     $('pre', node).text prefix + message.text
+    $('#message-form').css 'top', '0px'
     unless me
       node.append("""
         <footer>
@@ -143,6 +144,7 @@ class SystemsPage
 
     $('#message-label').text $('.text', selected).text()
     $('#messages').empty()
+    $('#message-form').css 'top', '10px'
     @layout.resize()
     this.restoreChat(jid)
 
@@ -189,21 +191,20 @@ class SystemsPage
 
   showRoster: ->
     container = $ '#container'
-    msg       = $ '#message'
     form      = $ '#message-form'
     roster    = $ '#roster'
     items     = $ '#roster-items'
     rform     = $ '#roster-form'
 
-    up = container.height() - msg.position().top < container.height() / 2
+    up = container.height() - form.position().top < container.height() / 2
     if up
       roster.css 'top', ''
-      roster.css 'bottom', form.outerHeight() + 'px'
+      roster.css 'bottom', (form.outerHeight() + 5) + 'px'
       height = container.height() - form.outerHeight() - 20
     else
       roster.css 'bottom', ''
-      roster.css 'top', (msg.position().top + form.outerHeight()) + 'px'
-      height = container.height() - msg.position().top - 30
+      roster.css 'top', (form.position().top + form.outerHeight()) + 'px'
+      height = container.height() - form.position().top - 30
 
     items.css 'max-height', (height - rform.outerHeight() - 40)  + 'px'
     roster.css 'max-height', height + 'px'
@@ -245,6 +246,8 @@ class SystemsPage
         </div>
       </div>
     """).appendTo '#container'
+    # padding is removed when first message is received
+    $('#message-form').css 'top', '10px'
     $('#message-form').submit => this.send()
     $('#messages').click -> $('#roster').hide()
     $('#message').focus  -> $('#roster').hide()
