@@ -18,6 +18,11 @@ module Vines
         @throttle = Throttle.new(@stream)
         @queues = {}
 
+        @stream.register_handler(:stream_error) do |e|
+          log.error(e.message)
+          true # prevent EM.stop
+        end
+
         @stream.register_handler(:disconnected) do
           log.info("Stream disconnected, reconnecting . . .")
           EM::Timer.new(10) do
