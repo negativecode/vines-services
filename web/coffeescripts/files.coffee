@@ -84,12 +84,12 @@ class FilesPage
 
     new Button $('.file-icon', node).get(0), ICONS.page2,
       scale: 1.0
-      translation: '-2 0'
+      translation: '-2,0'
       'stroke-width': 0.1
       opacity: 1.0
 
     new Button $('.add-label-button', node).get(0), ICONS.plus,
-      translation: '-10 -10'
+      translation: '-20,-20'
       scale: 0.5
 
     $('form.file-form', node).submit => this.deleteFile node
@@ -112,7 +112,7 @@ class FilesPage
     item.attr 'data-name', label
 
     new Button $('.remove', item).get(0), ICONS.cross,
-      translation: '-8 -8'
+      translation: '-16,-16'
       scale: 0.5
 
     $('.remove', item).click =>
@@ -332,7 +332,7 @@ class FilesPage
       node.attr 'data-file', file.name
 
       new Button $('.cancel', node).get(0), ICONS.cross,
-        translation: '-8 -8'
+        translation: '-16,-16'
         scale: 0.5
       $('.cancel', node).click => this.cancel file
       node
