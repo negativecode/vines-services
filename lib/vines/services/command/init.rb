@@ -38,7 +38,7 @@ module Vines
           `vines init #{@domain}`
           FileUtils.mv(Dir.glob("#{@domain}/*"), '.')
           FileUtils.remove_dir(@domain)
-          FileUtils.remove_dir('data/users')
+          FileUtils.remove_dir('data')
           web = File.expand_path("../../../../../web", __FILE__)
           FileUtils.cp_r(Dir.glob("#{web}/*"), 'web')
           update_server_config('conf/config.rb')
