@@ -92,29 +92,35 @@ class SetupPage
           this.drawUserBlankSlate()
         else
           this.drawSystemBlankSlate()
-    false
 
   selectTask: (event) ->
     @selected = null
     $('#setup li').removeClass 'selected secondary'
     $(event.currentTarget).addClass 'selected secondary'
+    $('form.overlay').fadeOut 100, => @layout.resize()
     switch $(event.currentTarget).attr('id')
       when 'users-nav'
         $('#beta-header').text 'Users'
+        $('#remove-user-form h2').text 'Remove User'
+        $('#remove-user-msg').html "Select a user to delete."
+        $('#remove-user-form .buttons').hide()
         this.drawUsers()
         this.drawUserBlankSlate()
-        if @api.user.permissions.users
-          $('#beta-controls div').show()
-        else
-          $('#beta-controls div').hide()
+        this.toggleBetaControls @api.user.permissions.users
       when 'systems-nav'
         $('#beta-header').text 'Systems'
+        $('#remove-user-form h2').text 'Remove System'
+        $('#remove-user-msg').html "Select a system to delete."
+        $('#remove-user-form .buttons').hide()
         this.drawUsers()
         this.drawSystemBlankSlate()
-        if @api.user.permissions.systems
-          $('#beta-controls div').show()
-        else
-          $('#beta-controls div').hide()
+        this.toggleBetaControls @api.user.permissions.systems
+
+  toggleBetaControls: (show) ->
+    if show
+      $('#beta-controls div').show()
+    else
+      $('#beta-controls div').hide()
 
   toggleForm: (form, fn) ->
     form = $(form)
@@ -124,8 +130,9 @@ class SetupPage
       fn() if fn
       form.fadeIn 100
     else
-      form.fadeOut 100, ->
+      form.fadeOut 100, =>
         form[0].reset()
+        @layout.resize()
         fn() if fn
 
   validateUser: ->
@@ -133,11 +140,10 @@ class SetupPage
     $('#password-error').empty()
     valid = true
 
-    node = $.trim $('#user-name').val()
-    password1 = $.trim $('#password1').val()
-    password2 = $.trim $('#password2').val()
+    password1 = $('#password1').val().trim()
+    password2 = $('#password2').val().trim()
 
-    if @selected # exisiting user
+    if @selected # existing user
       if password2.length > 0 && password2.length < 8
         $('#password-error').text 'Password must be at least 8 characters.'
         valid = false
@@ -149,6 +155,7 @@ class SetupPage
           valid = false
 
     else # new user
+      node = $('#user-name').val().trim()
       if node == ''
         $('#user-name-error').text 'User name is required.'
         valid = false
@@ -195,13 +202,15 @@ class SetupPage
         node = this.userNode result
         this.selectUser node
       else
-        $('.text', node).text this.userName(result)
+        selected = (u for u in @users when u.jid == result.jid)[0]
+        selected.name = this.userName result
+        $('.text', node).text this.userName result
     false
 
   validateSystem: ->
     $('#user-name-error').empty()
     valid = true
-    node = $.trim $('#user-name').val()
+    node = $('#user-name').val().trim()
     unless @selected # new user
       if node == ''
         $('#user-name-error').text 'Hostname is required.'
@@ -230,6 +239,7 @@ class SetupPage
         node = this.userNode result
         this.selectUser node
       else
+        @selected.name = result.name
         $('.text', node).text result.name
     false
 
@@ -337,7 +347,9 @@ class SetupPage
 
     $('#remove-user').click        => this.toggleForm '#remove-user-form'
     $('#remove-user-cancel').click => this.toggleForm '#remove-user-form'
-    $('#remove-user-form').submit  => this.removeUser()
+    $('#remove-user-form').submit  =>
+      this.removeUser()
+      false
 
     fn = =>
       @layout.resize()
