@@ -11,7 +11,7 @@ defined as: platform is 'mac_os_x' and platform_version starts with '10.7'.
 As machines update to Lion, they will join this service automatically and may
 be managed as one group.
 
-Additional documentation can be found at www.getvines.com.
+Additional documentation can be found at www.getvines.org.
 
 == Usage
 
@@ -21,15 +21,9 @@ Additional documentation can be found at www.getvines.com.
 
 == Dependencies
 
-* bcrypt-ruby >= 3.0.1
-* blather >= 0.5.8
-* citrus >= 2.4.0
-* eventmachine >= 0.12.10
-* sqlite3 >= 1.3.4
-* ruby >= 1.9.2
-
-== Ubuntu setup
-$ sudo apt-get install build-essential ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev
+Vines Services requires Ruby 1.9.2 or better. Instructions for installing the
+needed OS packages, as well as Ruby itself, are available at
+http://www.getvines.org/ruby.
 
 == Contact
 
