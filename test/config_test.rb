@@ -3,7 +3,7 @@
 require 'vines/services'
 require 'minitest/autorun'
 
-class ConfigTest < MiniTest::Unit::TestCase
+describe Vines::Services::Config do
   def teardown
     FileUtils.rm(Dir.glob('localhost-*.db'))
     %w[data uploads].each do |dir|

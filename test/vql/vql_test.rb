@@ -3,7 +3,7 @@
 require 'vines/services'
 require 'minitest/autorun'
 
-class VinesQLTest < MiniTest::Unit::TestCase
+describe VinesQL do
   def setup
     Citrus.load(File.expand_path('../../../lib/vines/services/vql/vql.citrus', __FILE__))
   end

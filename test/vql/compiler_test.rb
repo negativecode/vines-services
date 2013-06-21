@@ -3,7 +3,7 @@
 require 'vines/services'
 require 'minitest/autorun'
 
-class CompilerTest < MiniTest::Unit::TestCase
+describe Vines::Services::VQL::Compiler do
   def setup
     @compiler = Vines::Services::VQL::Compiler.new
     @query = "foo.bar like ' spam ' and (age < 42 or age > 99)"

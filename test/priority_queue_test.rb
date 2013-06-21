@@ -3,7 +3,7 @@
 require 'vines/services'
 require 'minitest/autorun'
 
-class PriorityQueueTest < MiniTest::Unit::TestCase
+describe Vines::Services::PriorityQueue do
   def test_queue_push_sorts
     queue = Vines::Services::PriorityQueue.new
     nums = (0..10_000).map {|i| rand(10_000) }

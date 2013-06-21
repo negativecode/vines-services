@@ -3,7 +3,7 @@
 require 'vines/services'
 require 'minitest/autorun'
 
-class CouchDBTest < MiniTest::Unit::TestCase
+describe Vines::Services::Storage::CouchDB do
   def teardown
     FileUtils.rm(Dir.glob('localhost-*.db'))
   end
