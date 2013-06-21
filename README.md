@@ -1,4 +1,4 @@
-== Welcome to Vines Services
+# Welcome to Vines Services
 
 Vines Services are dynamically updated groups of systems based on criteria like
 hostname, installed software, operating system, etc. Send a command to the
@@ -13,22 +13,31 @@ be managed as one group.
 
 Additional documentation can be found at www.getvines.org.
 
-== Usage
+## Usage
 
-1. gem install vines-services
-2. vines-services init wonderland.lit
-3. cd wonderland.lit && vines-services start
+```
+$ gem install vines-services
+$ vines-services init wonderland.lit
+$ cd wonderland.lit && vines-services start
+```
 
-== Dependencies
+## Dependencies
 
-Vines Services requires Ruby 1.9.2 or better. Instructions for installing the
+Vines Services requires Ruby 1.9.3 or better. Instructions for installing the
 needed OS packages, as well as Ruby itself, are available at
 http://www.getvines.org/ruby.
 
-== Contact
+## Development
+
+```
+$ script/bootstrap
+$ script/tests
+```
+
+## Contact
 
 * David Graham <david@negativecode.com>
 
-== License
+## License
 
 Vines Services is released under the MIT license. Check the LICENSE file for details.
