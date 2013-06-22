@@ -1,50 +1,16 @@
 require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
-require 'rubygems/package_task'
 require 'nokogiri'
-require_relative 'lib/vines/services/version'
+require './lib/vines/services/version'
 
 CLOBBER.include('pkg', 'web/javascripts', 'web/stylesheets/app.css')
 
-spec = Gem::Specification.new do |s|
-  s.name    = "vines-services"
-  s.version = Vines::Services::VERSION
+directory 'pkg'
 
-  s.summary     = "An XMPP component that broadcasts shell commands to many agents."
-  s.description = "Vines Services are dynamically updated groups of systems based
-on criteria like hostname, installed software, operating system, etc. Send a
-command to the service and it runs on every system in the group. Services, files
-and permissions are managed via the bundled web application."
-
-  s.authors      = ["David Graham"]
-  s.email        = %w[david@negativecode.com]
-  s.homepage     = "http://www.getvines.org"
-
-  s.test_files   = FileList["test/**/*"]
-  s.executables  = %w[vines-services]
-  s.require_path = "lib"
-
-  s.add_dependency "bcrypt-ruby", "~> 3.0.1"
-  s.add_dependency "blather", "~> 0.5.12"
-  s.add_dependency "citrus", "~> 2.4.0"
-  s.add_dependency "couchrest_model", "~> 1.1.2"
-  s.add_dependency "em-http-request", "~> 1.0.1"
-  s.add_dependency "sqlite3", "~> 1.3.5"
-  s.add_dependency "vines", ">= 0.4.0"
-
-  s.add_development_dependency "minitest"
-  s.add_development_dependency "rake"
-
-  s.required_ruby_version = '>= 1.9.2'
-end
-
-# Set gem file list after CoffeeScripts have been compiled, so web/javascripts/
-# is included in the gem.
-task :gemprep do
-  spec.files = FileList['[A-Z]*', '{bin,lib,conf,web}/**/*']
-  Gem::PackageTask.new(spec).define
-  Rake::Task['gem'].invoke
+desc 'Build distributable packages'
+task :build => [:pkg] do
+  system 'gem build vines-services.gemspec && mv vines-*.gem pkg/'
 end
 
 Rake::TestTask.new(:test) do |test|
@@ -129,4 +95,4 @@ task :cleanup do
   File.delete('/tmp/index.html')
 end
 
-task :default => [:clobber, :test, :compile, :gemprep, :cleanup]
+task :default => [:clobber, :test, :compile, :build, :cleanup]
