@@ -15,7 +15,7 @@ and permissions are managed via the bundled web application.]
   s.homepage     = 'http://www.getvines.org'
   s.license      = 'MIT'
 
-  s.files        = Dir['[A-Z]*', 'vines-services.gemspec', '{bin,lib,conf}/**/*'] - ['Gemfile.lock']
+  s.files        = Dir['[A-Z]*', 'vines-services.gemspec', '{bin,lib,conf,web}/**/*'] - ['Gemfile.lock']
   s.test_files   = Dir['test/**/*']
 
   s.executables  = %w[vines-services]
