@@ -39,8 +39,11 @@ module Vines
           FileUtils.mv(Dir.glob("#{@domain}/*"), '.')
           FileUtils.remove_dir(@domain)
           FileUtils.remove_dir('data')
-          web = File.expand_path("../../../../../web", __FILE__)
+
+          `vines-web install web`
+          web = File.expand_path("../../../../../public", __FILE__)
           FileUtils.cp_r(Dir.glob("#{web}/*"), 'web')
+
           update_server_config('conf/config.rb')
           `vines start -d`
           puts "Started vines server: vines start -d"
