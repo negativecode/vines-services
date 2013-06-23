@@ -1,3 +1,10 @@
+#= require api
+#= require commands
+#= require systems
+#= require services
+#= require files
+#= require setup
+
 $ ->
   session = new Session()
   nav = new NavBar(session)
