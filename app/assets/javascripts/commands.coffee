@@ -1,4 +1,4 @@
-class Commands
+class @Commands
   constructor: ->
     @buf = []
     @index = 0

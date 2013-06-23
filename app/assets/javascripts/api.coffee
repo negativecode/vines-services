@@ -1,4 +1,4 @@
-class Api
+class @Api
   USERS = 'http://getvines.com/protocol/users'
 
   constructor: (@session) ->

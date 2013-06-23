@@ -1,4 +1,4 @@
-class SetupPage
+class @SetupPage
   SERVICES = 'http://getvines.com/protocol/services'
   SYSTEMS  = 'http://getvines.com/protocol/systems'
   USERS    = 'http://getvines.com/protocol/users'

@@ -1,4 +1,4 @@
-class FilesPage
+class @FilesPage
   FILES  = 'http://getvines.com/protocol/files'
   LABELS = 'http://getvines.com/protocol/files/labels'
 

@@ -1,4 +1,4 @@
-class SystemsPage
+class @SystemsPage
   constructor: (@session) ->
     @session.onRoster   ( ) => this.roster()
     @session.onMessage  (m) => this.message(m)

@@ -1,4 +1,4 @@
-class ServicesPage
+class @ServicesPage
   SERVICES = 'http://getvines.com/protocol/services'
   MEMBERS  = 'http://getvines.com/protocol/services/members'
   SYSTEMS  = 'http://getvines.com/protocol/systems'
