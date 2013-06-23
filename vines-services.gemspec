@@ -27,7 +27,7 @@ and permissions are managed via the bundled web application.]
   s.add_dependency 'couchrest_model', '~> 1.1.2'
   s.add_dependency 'em-http-request', '~> 1.0.3'
   s.add_dependency 'sqlite3', '~> 1.3.7'
-  s.add_dependency 'vines', '>= 0.4.6'
+  s.add_dependency 'vines', '>= 0.4.7'
   s.add_dependency 'vines-couchdb', '>= 0.1.0'
   s.add_dependency 'vines-web', '>= 0.1.1'
 
