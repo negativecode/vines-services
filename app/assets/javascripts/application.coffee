@@ -1,3 +1,5 @@
+#= require vendor
+#= require lib
 #= require api
 #= require commands
 #= require systems

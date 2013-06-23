@@ -1,4 +1,6 @@
 /*
+ *= require base
+ *= require login
  *= require common
  *= require files
  *= require services

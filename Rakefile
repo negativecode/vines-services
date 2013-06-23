@@ -21,10 +21,13 @@ end
 desc 'Compile web assets'
 task :assets do
   require 'sprockets'
+  require 'vines/web'
+
   env = Sprockets::Environment.new
   env.cache = Sprockets::Cache::FileStore.new(Dir.tmpdir)
   env.append_path 'app/assets/javascripts'
   env.append_path 'app/assets/stylesheets'
+  Vines::Web.paths.each {|path| env.append_path path }
   env.js_compressor = :uglifier
 
   assets = %w[application.js application.css]
