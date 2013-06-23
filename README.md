@@ -32,6 +32,7 @@ http://www.getvines.org/ruby.
 ```
 $ script/bootstrap
 $ script/tests
+$ script/server
 ```
 
 ## Contact
