@@ -1,10 +1,12 @@
 require 'sprockets'
+require 'vines/web'
 
 use Rack::Static, urls: ['/images'], root: 'public', index: 'index.html'
 
 map '/assets' do
-  environment = Sprockets::Environment.new
-  environment.append_path 'app/assets/javascripts'
-  environment.append_path 'app/assets/stylesheets'
-  run environment
+  env = Sprockets::Environment.new
+  env.append_path 'app/assets/javascripts'
+  env.append_path 'app/assets/stylesheets'
+  Vines::Web.paths.each {|path| env.append_path path }
+  run env
 end
